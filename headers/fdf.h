@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/12 12:02:55 by gchamore          #+#    #+#             */
-/*   Updated: 2024/02/16 16:46:53 by gchamore         ###   ########.fr       */
+/*   Updated: 2024/02/19 17:11:55 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,41 @@
 #define	WINDOW_WIDTH 1920
 #define WINDOW_HEIGHT 1080
 
+// commands
+
+# define ARROW_LEFT 123
+# define ARROW_RIGHT 124
+# define ARROW_DOWN 125
+# define ARROW_UP 126
+# define MINUS 27
+# define PLUS 24
+# define SPACE 49
+# define KEY_R 15
+# define MOUSE_CLICK_LEFT 1
+# define MOUSE_CLICK_RIGHT 2
+# define MOUSE_CLICK_MIDDLE 3
+# define MOUSE_WHEEL_UP 4
+# define MOUSE_WHEEL_DOWN 5
+# define ESCAPE 53
+
+// colors
+
+#define BLACK_PIXEL 0x000000   // Noir
+#define WHITE_PIXEL 0xFFFFFF   // Blanc
+#define RED_PIXEL 0xFF0000     // Rouge
+#define GREEN_PIXEL 0x00FF00   // Vert
+#define BLUE_PIXEL 0x0000FF    // Bleu
+#define YELLOW_PIXEL 0xFFFF00  // Jaune
+#define ORANGE_PIXEL 0xFFA500  // Orange
+#define GRAY_PIXEL 0x808080     // Gris
+#define PINK_PIXEL 0xFFC0CB     // Rose
+#define MAROON_PIXEL 0x800000   // Marron
+#define TURQUOISE_PIXEL 0x40E0D0 // Turquoise
+#define GOLD_PIXEL 0xFFD700     // Or
+#define SILVER_PIXEL 0xC0C0C0   // Argent
+
+#define MLX_ERROR 1
+
 # include "libft.h"
 # include "mlx.h"
 # include <fcntl.h>
@@ -23,6 +58,9 @@
 # include <math.h>
 # include <stdio.h>
 # include <unistd.h>
+# include <X11/X.h>
+# include <X11/keysym.h>
+# include <mlx.h>
 
 typedef struct s_size
 {
@@ -44,14 +82,31 @@ typedef struct	s_point2D
 	int	y;
 }	t_point2D;
 
-typedef struct	s_data
+typedef struct s_img
 {
-	void	*img;
+	void	*mlx_img;
 	char	*addr;
-	int		bits_per_pixel;
-	int		line_length;
+	int		bpp; /* bits per pixel */
+	int		line_len;
 	int		endian;
-}				t_data;
+}	t_img;
+
+typedef struct s_data
+{
+	void	*mlx_ptr;
+	void	*win_ptr;
+	t_img	img;
+	int		cur_img;
+}	t_data;
+
+typedef struct s_rect
+{
+	int	x;
+	int	y;
+	int width;
+	int height;
+	int color;
+}	t_rect;
 
 //#################################
 //#	    	   PARSING		      #
@@ -73,7 +128,7 @@ int			ft_is_delimiter(char c);
 //#################################
 //#	    	   MATRICE		      #
 //#################################
-void get_coordinates_from_map(int **map, t_size *size);
+void		get_coordinates_from_map(int **map, t_size *size);
 
 //#################################
 //#	    	   	 FDF	 	      #
@@ -83,7 +138,12 @@ void		init_structs(t_size *size);
 //#################################
 //#	    	   	 PIXELS	 	      #
 //#################################
-void		pixel_brain();
-void		ft_put_pixel(t_data *data, int x, int y, int color);
+
+void		render_background(t_img *img, int color);
+int			render_rect(t_img *img, t_rect rect);
+int			pixel_brain(char *argv);
+int			render(t_data *data, int x, int y, int color);
+int			handle_keypress(int keysym, t_data *data);
+void		img_pix_put(t_img *img, int x, int y, int color);
 
 #endif
