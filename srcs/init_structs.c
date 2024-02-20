@@ -6,14 +6,9 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 11:57:35 by gchamore          #+#    #+#             */
-/*   Updated: 2024/02/16 15:55:04 by gchamore         ###   ########.fr       */
+/*   Updated: 2024/02/20 13:19:36 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/fdf.h"
 
-void	init_structs(t_size *size)
-{
-	size->height = 0;
-	size->width = 0;
-}

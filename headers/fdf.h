@@ -6,14 +6,14 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/12 12:02:55 by gchamore          #+#    #+#             */
-/*   Updated: 2024/02/19 17:11:55 by gchamore         ###   ########.fr       */
+/*   Updated: 2024/02/20 14:38:28 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FDF_H
 # define FDF_H
 
-#define	WINDOW_WIDTH 1920
+#define WINDOW_WIDTH 1920
 #define WINDOW_HEIGHT 1080
 
 // commands
@@ -118,7 +118,7 @@ void		ft_get_size(char *file, t_size *size);
 char		**ft_mod_split(char *str);
 void		*ft_verif_str(char **split, char *str);
 int			ft_count_rows(char	**tab);
-void		ft_free_tab(int **map, int height) ;
+void		ft_free_tab(int **map, int height, t_point2D *points);
 void		ft_free_split(char **split);
 int			ft_one_word_len(char *str);
 int			ft_words_count(char *str);
@@ -128,21 +128,21 @@ int			ft_is_delimiter(char c);
 //#################################
 //#	    	   MATRICE		      #
 //#################################
-void		get_coordinates_from_map(int **map, t_size *size);
+
+void get_coordinates_from_map(int **map, t_size *size, t_point2D *points);
 
 //#################################
 //#	    	   	 FDF	 	      #
 //#################################
-void		init_structs(t_size *size);
+void	init_structs(t_size *size);
 
 //#################################
 //#	    	   	 PIXELS	 	      #
 //#################################
 
 void		render_background(t_img *img, int color);
-int			render_rect(t_img *img, t_rect rect);
-int			pixel_brain(char *argv);
-int			render(t_data *data, int x, int y, int color);
+int			pixel_brain(char *argv, t_point2D *points, t_size *size);
+void		render_background(t_img *img, int color);
 int			handle_keypress(int keysym, t_data *data);
 void		img_pix_put(t_img *img, int x, int y, int color);
 
