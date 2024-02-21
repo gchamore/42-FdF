@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/13 14:38:36 by gchamore          #+#    #+#             */
-/*   Updated: 2024/02/20 12:53:28 by gchamore         ###   ########.fr       */
+/*   Updated: 2024/02/21 10:58:07 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,8 +81,7 @@ void	ft_free_tab(int **map, int height, t_point2D *points)
         }
         free(map);
     }
-	if(points)
-		free(points);
+    free(points);
 }
 
 // Compte le nombre de lignes dans un tableau de chaînes de caractères.

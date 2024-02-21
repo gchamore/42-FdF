@@ -6,12 +6,11 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/12 12:03:01 by gchamore          #+#    #+#             */
-/*   Updated: 2024/02/20 14:49:44 by gchamore         ###   ########.fr       */
+/*   Updated: 2024/02/21 13:27:38 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/fdf.h"
-
 
 void	init_structs(t_size *size)
 {
@@ -19,14 +18,19 @@ void	init_structs(t_size *size)
 	size->width = 0;
 }
 
-int handle_keypress(int keysym, t_data *data)
+int	handle_keypress(int keysym, t_data *data)
 {
-    if (keysym == XK_Escape)
-    {
-        mlx_destroy_window(data->mlx_ptr, data->win_ptr);
-        data->win_ptr = NULL;
-    }
-    return (0);
+	if (keysym == XK_Escape)
+	{
+		mlx_destroy_window(data->mlx_ptr, data->win_ptr);
+		data->win_ptr = NULL;
+	}
+	// else if (keysym == XK_Escape)
+	// {
+	// 	mlx_destroy_window(data->mlx_ptr, data->win_ptr);
+	// 	data->win_ptr = NULL;
+	// }
+	return (0);
 }
 
 void	render_background(t_img *img, int color)
@@ -55,10 +59,8 @@ void	img_pix_put(t_img *img, int x, int y, int color)
     pixel = img->addr + (y * img->line_len + x * (img->bpp / 8));
 	while (i >= 0)
 	{
-		/* big endian, MSB is the leftmost bit */
 		if (img->endian != 0)
 			*pixel++ = (color >> i) & 0xFF;
-		/* little endian, LSB is the leftmost bit */
 		else
 			*pixel++ = (color >> (img->bpp - 8 - i)) & 0xFF;
 		i -= 8;
@@ -77,9 +79,34 @@ void ft_draw(t_data *data, t_point2D *points, t_size *size)
     }
 }
 
+int render(void *param)
+{
+    t_render_data *render_data;
+    t_data *data;
+	
+	render_data = (t_render_data *)param;
+	data = render_data->data;
+
+    if (data->win_ptr == NULL)
+        return (1);
+    render_background(&(data->img), render_data->color);
+    ft_draw(data, render_data->points, render_data->size);
+    mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->img.mlx_img, 0, 0);
+    return (0);
+}
+
+void	fill_render(t_render_data *render_data, t_data *data, t_point2D *points, t_size *size)
+{
+	render_data->data = data;
+	render_data->points = points;
+	render_data->size = size;
+	render_data->color = BLACK_PIXEL;
+}
+
 int pixel_brain(char *argv, t_point2D *points, t_size *size)
 {
     t_data data;
+	t_render_data render_data;
 
     data.mlx_ptr = mlx_init();
     if (data.mlx_ptr == NULL)
@@ -88,17 +115,11 @@ int pixel_brain(char *argv, t_point2D *points, t_size *size)
     data.win_ptr = mlx_new_window(data.mlx_ptr, WINDOW_WIDTH, WINDOW_HEIGHT, argv);
     if (data.win_ptr == NULL)
         return (MLX_ERROR);
-
     data.img.mlx_img = mlx_new_image(data.mlx_ptr, WINDOW_WIDTH, WINDOW_HEIGHT);
-    data.img.addr = mlx_get_data_addr(data.img.mlx_img, &data.img.bpp,
-                                       &data.img.line_len, &data.img.endian);
-
-    render_background(&(data.img), BLACK_PIXEL);
-    mlx_put_image_to_window(data.mlx_ptr, data.win_ptr, data.img.mlx_img, 0, 0);
-    ft_draw(&data, points, size);
-	mlx_put_image_to_window(data.mlx_ptr, data.win_ptr, data.img.mlx_img, 0, 0);
-	mlx_hook(data.win_ptr, KeyPress, KeyPressMask, &handle_keypress, &data);
-
+    data.img.addr = mlx_get_data_addr(data.img.mlx_img, &data.img.bpp, &data.img.line_len, &data.img.endian);
+	fill_render(&render_data, &data, points, size);
+	mlx_loop_hook(data.mlx_ptr, render, &render_data);
+	mlx_key_hook(data.win_ptr, handle_keypress, &data);
     mlx_loop(data.mlx_ptr);
 
     mlx_destroy_image(data.mlx_ptr, data.img.mlx_img);
@@ -114,11 +135,11 @@ void get_coordinates_from_map(int **map, t_size *size, t_point2D *points)
     int i;
     int coord_x;
     int coord_y;
-    double scale_factor = 15.0; // Facteur d'échelle pour agrandir les points
-
-    int offset_x = WINDOW_WIDTH / 2; // Décalage pour ramener les coordonnées à des valeurs positives
-    int offset_y = WINDOW_HEIGHT / 2;
-
+    float scale_factor;
+	
+	scale_factor = 5;
+    int re_scaling_x = WINDOW_WIDTH / 2;
+    int re_scaling_y = WINDOW_HEIGHT / 2;
     x = 0;
     i = 0;
     while (x < size->height)
@@ -126,9 +147,8 @@ void get_coordinates_from_map(int **map, t_size *size, t_point2D *points)
         y = 0;
         while (y < size->width)
         {
-            coord_x = (sqrt(3) / 2) * (x - y) * scale_factor + offset_x;
-            coord_y = (sqrt(3) / 2) * (x + y) * scale_factor - map[x][y] * scale_factor + offset_y;
-            
+            coord_x = (sqrt(3) / 2) * (x - y) * scale_factor + re_scaling_x;
+            coord_y = (sqrt(3) / 2) * (x + y) * scale_factor - map[x][y] * scale_factor + re_scaling_y;
             points[i] = (t_point2D){coord_x, coord_y};
             ft_printf("x = %d && y = %d\n", points[i].x, points[i].y);
             y++;
@@ -137,8 +157,6 @@ void get_coordinates_from_map(int **map, t_size *size, t_point2D *points)
         x++;
     }
 }
-
-
 
 int main(int argc, char **argv)
 {

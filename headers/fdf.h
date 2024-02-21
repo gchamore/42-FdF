@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/12 12:02:55 by gchamore          #+#    #+#             */
-/*   Updated: 2024/02/20 14:38:28 by gchamore         ###   ########.fr       */
+/*   Updated: 2024/02/21 13:26:01 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ typedef struct s_img
 {
 	void	*mlx_img;
 	char	*addr;
-	int		bpp; /* bits per pixel */
+	int		bpp;
 	int		line_len;
 	int		endian;
 }	t_img;
@@ -101,12 +101,20 @@ typedef struct s_data
 
 typedef struct s_rect
 {
-	int	x;
-	int	y;
-	int width;
-	int height;
-	int color;
+    int	x;
+    int	y;
+    int width;
+    int height;
+    int color;
 }	t_rect;
+
+typedef struct s_render_data
+{
+    t_data		*data;
+    t_point2D	*points;
+    t_size		*size;
+    int			color;
+}	t_render_data;
 
 //#################################
 //#	    	   PARSING		      #
@@ -145,5 +153,7 @@ int			pixel_brain(char *argv, t_point2D *points, t_size *size);
 void		render_background(t_img *img, int color);
 int			handle_keypress(int keysym, t_data *data);
 void		img_pix_put(t_img *img, int x, int y, int color);
+int			render(void *param);
+void		ft_draw(t_data *data, t_point2D *points, t_size *size);
 
 #endif
