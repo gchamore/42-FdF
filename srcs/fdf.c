@@ -6,19 +6,56 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/12 12:03:01 by gchamore          #+#    #+#             */
-/*   Updated: 2024/02/22 15:12:01 by gchamore         ###   ########.fr       */
+/*   Updated: 2024/02/22 17:23:11 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/fdf.h"
 
-void	init_structs(t_size *size)
+t_render_data *create_render_data()
 {
-	size->height = 0;
-	size->width = 0;
+    t_render_data *render_data = malloc(sizeof(t_render_data));
+    if (render_data)
+	{
+		render_data->rotation_data = malloc(sizeof(t_rotation_data));
+        render_data->data = malloc(sizeof(t_data));
+		render_data->size = malloc(sizeof(t_size));
+    }
+    return render_data;
 }
 
-void rotate_points(t_point2D *points, int num_points, double angle)
+void	ft_free_tab(int **test , int height) 
+{
+	int i;
+	
+	i = 0;
+    if (test)
+	{
+        while (i < height)
+		{
+            free(test[i]);
+            i++;
+        }
+        free(test);
+    }
+}
+
+void free_render_data(t_render_data *render_data)
+{
+    	free(render_data->rotation_data);
+    	free(render_data->data);
+		free(render_data->points);
+		free(render_data->size);
+    	free(render_data);
+}
+
+void	init_structs(t_render_data *render_data)
+{
+	render_data->size->height = 0;
+	render_data->size->width = 0;
+}
+
+void rotate_points(t_render_data *render_data, int num_points, double angle)
 {
 	int i;
     double cos_angle;
@@ -31,10 +68,10 @@ void rotate_points(t_point2D *points, int num_points, double angle)
 	sin_angle = sin(angle);
     while (i < num_points)
 	{
-        new_x = points[i].x * cos_angle - points[i].y * sin_angle;
-        new_y = points[i].x * sin_angle + points[i].y * cos_angle;
-        points[i].x = new_x;
-        points[i].y = new_y;
+        new_x = render_data->points[i].x * cos_angle - render_data->points[i].y * sin_angle;
+        new_y = render_data->points[i].x * sin_angle + render_data->points[i].y * cos_angle;
+        render_data->points[i].x = new_x;
+        render_data->points[i].y = new_y;
 		i++;
     }
 }
@@ -50,7 +87,7 @@ void rotate_points(t_point2D *points, int num_points, double angle)
 // 		mlx_destroy_window(data->mlx_ptr, data->win_ptr);
 // 		data->win_ptr = NULL;
 //         // render_data->rotation_data->angle -= rotation_step;
-//         // rotate_points(render_data->points, render_data->size->width * render_data->size->height, render_data->rotation_data->angle);
+//         // rotate_points(render_data->points, render_data->render_data->size->width * render_data->render_data->size->height, render_data->rotation_data->angle);
 //         // return (1);
 //     }
 // 	else if (keysym == XK_Right)
@@ -58,18 +95,18 @@ void rotate_points(t_point2D *points, int num_points, double angle)
 // 		mlx_destroy_window(data->mlx_ptr, data->win_ptr);
 // 		data->win_ptr = NULL;
 //         // render_data->rotation_data->angle += rotation_step;
-//         // rotate_points(render_data->points, render_data->size->width * render_data->size->height, render_data->rotation_data->angle);
+//         // rotate_points(render_data->points, render_data->render_data->size->width * render_data->render_data->size->height, render_data->rotation_data->angle);
 //         // return (1);
 //     }
 //     return (0);
 // }
 
-int	handle_keypress(int keysym, t_data *data)
+int	handle_keypress(int keysym, t_render_data *render_data)
 {
 	if (keysym == XK_Escape)
 	{
-		mlx_destroy_window(data->mlx_ptr, data->win_ptr);
-		data->win_ptr = NULL;
+		mlx_destroy_window(render_data->data->mlx_ptr, render_data->data->win_ptr);
+		render_data->data->win_ptr = NULL;
 	}
 	return (0);
 }
@@ -151,34 +188,34 @@ void ft_render_line(t_img *img, int x0, int y0, int x1, int y1, int color)
     }
 }
 
-void ft_render_dot(t_data *data, t_point2D *points, t_size *size)
+void ft_render_dot(t_render_data *render_data)
 {
     int i;
 	int j;
 
 	i = 0;
 	j = 0;
-    while (i < size->height)
+    while (i < render_data->size->height)
     {
         j = 0;
-        while (j < size->width - 1)
+        while (j < render_data->size->width - 1)
         {
-            int index1 = i * size->width + j;
-            int index2 = i * size->width + (j + 1);
-            ft_render_line(&(data->img), points[index1].x, points[index1].y, points[index2].x, points[index2].y, WHITE_PIXEL);
+            int index1 = i * render_data->size->width + j;
+            int index2 = i * render_data->size->width + (j + 1);
+            ft_render_line(&(render_data->data->img), render_data->points[index1].x, render_data->points[index1].y, render_data->points[index2].x, render_data->points[index2].y, WHITE_PIXEL);
             j++;
         }
         i++;
     }
     j = 0;
-    while (j < size->width)
+    while (j < render_data->size->width)
     {
         i = 0;
-        while (i < size->height - 1)
+        while (i < render_data->size->height - 1)
         {
-            int index1 = i * size->width + j;
-            int index2 = (i + 1) * size->width + j;
-            ft_render_line(&(data->img), points[index1].x, points[index1].y, points[index2].x, points[index2].y, WHITE_PIXEL);
+            int index1 = i * render_data->size->width + j;
+            int index2 = (i + 1) * render_data->size->width + j;
+            ft_render_line(&(render_data->data->img), render_data->points[index1].x, render_data->points[index1].y, render_data->points[index2].x, render_data->points[index2].y, WHITE_PIXEL);
             i++;
         }
         j++;
@@ -186,59 +223,38 @@ void ft_render_dot(t_data *data, t_point2D *points, t_size *size)
 }
 
 
-int ft_render(void *param)
+int ft_render(t_render_data *render_data)
 {
-    t_render_data *render_data;
-    t_data *data;
-	
-	render_data = (t_render_data *)param;
-	data = render_data->data;
-
-    if (data->win_ptr == NULL)
+    if (render_data->data->win_ptr == NULL)
         return (1);
-    render_background(&(data->img), render_data->color);
-    ft_render_dot(data, render_data->points, render_data->size);
-    mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->img.mlx_img, 0, 0);
+    render_background(&(render_data->data->img), render_data->color);
+    ft_render_dot(render_data);
+    mlx_put_image_to_window(render_data->data->mlx_ptr, render_data->data->win_ptr, render_data->data->img.mlx_img, 0, 0);
     return (0);
 }
 
-void	fill_render(t_render_data *render_data, t_data *data, t_point2D *points, t_size *size)
+int pixel_brain(char *argv, t_render_data *render_data)
 {
-	render_data->data = data;
-	render_data->points = points;
-	render_data->size = size;
-	render_data->color = BLACK_PIXEL;
-}
-
-int pixel_brain(char *argv, t_point2D *points, t_size *size)
-{
-    t_data data;
-    t_render_data render_data;
-    // t_rotation_data rotation_data;
-
-    data.mlx_ptr = mlx_init();
-    if (data.mlx_ptr == NULL)
+    render_data->data->mlx_ptr = mlx_init();
+    if (render_data->data->mlx_ptr == NULL)
         return (MLX_ERROR);
-    data.win_ptr = mlx_new_window(data.mlx_ptr, WINDOW_WIDTH, WINDOW_HEIGHT, argv);
-    if (data.win_ptr == NULL)
+    render_data->data->win_ptr = mlx_new_window(render_data->data->mlx_ptr, WINDOW_WIDTH, WINDOW_HEIGHT, argv);
+    if (render_data->data->win_ptr == NULL)
         return (MLX_ERROR);
-    data.img.mlx_img = mlx_new_image(data.mlx_ptr, WINDOW_WIDTH, WINDOW_HEIGHT);
-    data.img.addr = mlx_get_data_addr(data.img.mlx_img, &data.img.bpp, &data.img.line_len, &data.img.endian);
-	fill_render(&render_data, &data, points, size);
-	mlx_loop_hook(data.mlx_ptr, ft_render, &render_data);
-	// rotation_data.angle = 0.0;
-	// render_data.rotation_data = &rotation_data;
-	// mlx_key_hook(data.win_ptr, handle_rotation, &data);
-	mlx_key_hook(data.win_ptr, handle_keypress, &data);
-    mlx_loop(data.mlx_ptr);
-
-    mlx_destroy_image(data.mlx_ptr, data.img.mlx_img);
-    mlx_destroy_display(data.mlx_ptr);
-    free(data.mlx_ptr);
+    render_data->data->img.mlx_img = mlx_new_image(render_data->data->mlx_ptr, WINDOW_WIDTH, WINDOW_HEIGHT);
+    render_data->data->img.addr = mlx_get_data_addr(render_data->data->img.mlx_img, &render_data->data->img.bpp, &render_data->data->img.line_len, &render_data->data->img.endian);
+	mlx_loop_hook(render_data->data->mlx_ptr, ft_render, render_data);
+	render_data->rotation_data->angle = 0.0;
+	// mlx_key_hook(data->win_ptr, handle_rotation, &data);
+	mlx_key_hook(render_data->data->win_ptr, handle_keypress, render_data);
+    mlx_loop(render_data->data->mlx_ptr);
+    mlx_destroy_image(render_data->data->mlx_ptr, render_data->data->img.mlx_img);
+    mlx_destroy_display(render_data->data->mlx_ptr);
+	free(render_data->data->mlx_ptr);
     return (0);
 }
 
-void get_coordinates_from_map(int **map, t_size *size, t_point2D *points)
+void get_coordinates_from_map(int **map, t_render_data *render_data)
 {
     int x, y, i;
     double scale_factor;
@@ -246,20 +262,20 @@ void get_coordinates_from_map(int **map, t_size *size, t_point2D *points)
 
     scale_factor = 17.0;
 
-    re_scaling_x = WINDOW_WIDTH / 2 - ((size->width / 2) * scale_factor);
-    re_scaling_y = WINDOW_HEIGHT / 2 - ((size->height / 2) * scale_factor);
+    re_scaling_x = WINDOW_WIDTH / 2 - ((render_data->size->width / 2) * scale_factor);
+    re_scaling_y = WINDOW_HEIGHT / 2 - ((render_data->size->height / 2) * scale_factor);
 
     i = 0;
 	y = 0;
-    while (y < size->height)
+    while (y < render_data->size->height)
     {
 		x = 0;
-        while (x < size->width)
+        while (x < render_data->size->width)
         {
             int coord_x = (sqrt(3) / 2) * (x - y) * scale_factor + re_scaling_x;
             int coord_y = (sqrt(3) / 2) * (x + y) * scale_factor - map[y][x] * scale_factor + re_scaling_y;
-            points[i] = (t_point2D){coord_x, coord_y};
-            ft_printf("x = %d && y = %d\n", points[i].x, points[i].y);
+            render_data->points[i] = (t_point2D){coord_x, coord_y};
+            ft_printf("x = %d && y = %d\n", render_data->points[i].x, render_data->points[i].y);
             i++;
 			x++;
         }
@@ -270,10 +286,14 @@ void get_coordinates_from_map(int **map, t_size *size, t_point2D *points)
 int main(int argc, char **argv)
 {
     int fd;
-    t_size size;
-    t_point2D *points;
-    
-    init_structs(&size);
+	t_render_data *render_data;
+	int	**map;
+	
+	map = NULL;
+	render_data = create_render_data();
+	if (!render_data)
+        return (MLX_ERROR);
+    init_structs(render_data);
     if (argc <= 1)
         return (0);
     if (argc < 2)
@@ -281,27 +301,17 @@ int main(int argc, char **argv)
         ft_printf("Usage: %s filename\n", argv[0]);
         return (1);
     }
-    ft_get_size(argv[1], &size);
-    points = malloc(sizeof(t_point2D) * (size.height * size.width));
-    if (!points)
+    ft_get_size(argv[1], render_data);
+    render_data->points = malloc(sizeof(t_point2D) * (render_data->size->height * render_data->size->width));
+    if (!render_data->points)
         return (0);
     fd = open(argv[1], O_RDONLY);
-    size.map = fill_tab(fd, size);
-    show_maps(size);
-    get_coordinates_from_map(size.map, &size, points);
-    pixel_brain(argv[1], points, &size);
-    ft_free_tab(size.map, size.height, points);
+    map = fill_tab(fd, map, render_data);
+	show_maps(render_data, map);
+    get_coordinates_from_map(map, render_data);
+	ft_free_tab(map, render_data->size->height);
+    pixel_brain(argv[1], render_data);
+	free_render_data(render_data);
     close(fd);
     return (0);
 }
-
-
-
-
-
-
-	
-	// pixel_brain(argv[1]);
-	// ft_free_tab(size.map, size.height, points);
-	// close(fd);
-	// return (0);

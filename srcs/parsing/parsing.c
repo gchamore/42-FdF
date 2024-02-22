@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/13 14:38:36 by gchamore          #+#    #+#             */
-/*   Updated: 2024/02/21 10:58:07 by gchamore         ###   ########.fr       */
+/*   Updated: 2024/02/22 17:13:48 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,23 +65,6 @@ void	ft_free_split(char **split)
 		}
 		free(split);
 	}
-}
-
-void	ft_free_tab(int **map, int height, t_point2D *points) 
-{
-	int i;
-	
-	i = 0;
-    if (map)
-	{
-        while (i < height)
-		{
-            free(map[i]);
-            i++;
-        }
-        free(map);
-    }
-    free(points);
 }
 
 // Compte le nombre de lignes dans un tableau de chaînes de caractères.
@@ -146,7 +129,7 @@ char	**ft_mod_split(char *str)
 }
 
 
-void	ft_get_size(char *file, t_size *size)
+void	ft_get_size(char *file, t_render_data *render_data)
 {
 	int		fd;
 	int		ct;
@@ -159,11 +142,11 @@ void	ft_get_size(char *file, t_size *size)
 	line = ft_get_next_line(fd);
 	if (!line)
 		return ;
-	size->width = ft_words_count(line);
+	render_data->size->width = ft_words_count(line);
 	while (line != 0)
 	{
-		if (size->width != 0)
-		size->height++;
+		if (render_data->size->width != 0)
+		render_data->size->height++;
 		free(line);
 		line = ft_get_next_line(fd);
 	}
@@ -171,7 +154,7 @@ void	ft_get_size(char *file, t_size *size)
 }
 
 
-int **fill_tab(int fd, t_size size)
+int **fill_tab(int fd, int **map,t_render_data *render_data)
 {
     char **split;
     char *line;
@@ -184,19 +167,19 @@ int **fill_tab(int fd, t_size size)
     line = ft_get_next_line(fd);
     if (!line)
         return (0);
-    size.map = malloc(sizeof(int *) * size.height);
-    if (!size.map)
+    map = malloc(sizeof(int *) * render_data->size->height);
+    if (!map)
         return (0);
-    while (i < size.height)
+    while (i < render_data->size->height)
     {
-        size.map[i] = malloc(sizeof(int) * size.width);
-        if (!size.map[i])
+        map[i] = malloc(sizeof(int) * render_data->size->width);
+        if (!map[i])
             return (0);
         y = 0;
         split = ft_mod_split(line);
-        while (y < size.width)
+        while (y < render_data->size->width)
         {
-			size.map[i][y] = ft_atoi(split[y]);
+			map[i][y] = ft_atoi(split[y]);
             y++;
         }
         free(line);
@@ -204,23 +187,23 @@ int **fill_tab(int fd, t_size size)
         line = ft_get_next_line(fd);
         i++;
     }
-    return (size.map);
+    return (map);
 }
 
-void	show_maps(t_size size)
+void	show_maps(t_render_data *render_data, int **map)
 {
 	int i;
 	int y;
 
 	i = 0;
 	ft_printf("\nMAP = \n");
-	while(i < size.height)
+	while(i < render_data->size->height)
 	{
 		y = 0;
 		ft_printf("\n");
-		while(y < size.width)
+		while(y < render_data->size->width)
 		{
-			ft_printf("%d ", size.map[i][y]);
+			ft_printf("%d ", map[i][y]);
 			y++;
 		}
 		i++;
