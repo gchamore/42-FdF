@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/12 12:02:55 by gchamore          #+#    #+#             */
-/*   Updated: 2024/02/21 13:26:01 by gchamore         ###   ########.fr       */
+/*   Updated: 2024/02/22 15:06:21 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,23 +15,6 @@
 
 #define WINDOW_WIDTH 1920
 #define WINDOW_HEIGHT 1080
-
-// commands
-
-# define ARROW_LEFT 123
-# define ARROW_RIGHT 124
-# define ARROW_DOWN 125
-# define ARROW_UP 126
-# define MINUS 27
-# define PLUS 24
-# define SPACE 49
-# define KEY_R 15
-# define MOUSE_CLICK_LEFT 1
-# define MOUSE_CLICK_RIGHT 2
-# define MOUSE_CLICK_MIDDLE 3
-# define MOUSE_WHEEL_UP 4
-# define MOUSE_WHEEL_DOWN 5
-# define ESCAPE 53
 
 // colors
 
@@ -62,19 +45,13 @@
 # include <X11/keysym.h>
 # include <mlx.h>
 
+
 typedef struct s_size
 {
 	int			**map;
 	int			height;
 	int			width;
 }	t_size;
-
-typedef struct	s_point3D
-{
-    int	x;
-    int	y;
-    int	z;
-}	t_point3D;
 
 typedef struct	s_point2D
 {
@@ -108,13 +85,20 @@ typedef struct s_rect
     int color;
 }	t_rect;
 
+typedef struct s_rotation_data
+{
+    double angle;
+}	t_rotation_data;
+
 typedef struct s_render_data
 {
+	t_rotation_data *rotation_data;
     t_data		*data;
     t_point2D	*points;
     t_size		*size;
     int			color;
 }	t_render_data;
+
 
 //#################################
 //#	    	   PARSING		      #
@@ -152,8 +136,12 @@ void		render_background(t_img *img, int color);
 int			pixel_brain(char *argv, t_point2D *points, t_size *size);
 void		render_background(t_img *img, int color);
 int			handle_keypress(int keysym, t_data *data);
+// int			handle_rotation(int keysym, t_data *data);
 void		img_pix_put(t_img *img, int x, int y, int color);
-int			render(void *param);
-void		ft_draw(t_data *data, t_point2D *points, t_size *size);
+int			ft_render(void *param);
+void		ft_render_dot(t_data *data, t_point2D *points, t_size *size);
+void		rotate_points(t_point2D *points, int num_points, double angle);
+void		ft_render_line(t_img *img, int x0, int y0, int x1, int y1, int color);
+int			my_abs(int x);
 
 #endif
