@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/13 14:38:36 by gchamore          #+#    #+#             */
-/*   Updated: 2024/02/22 17:13:48 by gchamore         ###   ########.fr       */
+/*   Updated: 2024/02/23 10:13:38 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,7 +154,7 @@ void	ft_get_size(char *file, t_render_data *render_data)
 }
 
 
-int **fill_tab(int fd, int **map,t_render_data *render_data)
+int **fill_tab(int fd, t_render_data *render_data)
 {
     char **split;
     char *line;
@@ -167,19 +167,19 @@ int **fill_tab(int fd, int **map,t_render_data *render_data)
     line = ft_get_next_line(fd);
     if (!line)
         return (0);
-    map = malloc(sizeof(int *) * render_data->size->height);
-    if (!map)
+    render_data->size->map = malloc(sizeof(int *) * render_data->size->height);
+    if (!render_data->size->map)
         return (0);
     while (i < render_data->size->height)
     {
-        map[i] = malloc(sizeof(int) * render_data->size->width);
-        if (!map[i])
+        render_data->size->map[i] = malloc(sizeof(int) * render_data->size->width);
+        if (!render_data->size->map[i])
             return (0);
         y = 0;
         split = ft_mod_split(line);
         while (y < render_data->size->width)
         {
-			map[i][y] = ft_atoi(split[y]);
+			render_data->size->map[i][y] = ft_atoi(split[y]);
             y++;
         }
         free(line);
@@ -187,10 +187,10 @@ int **fill_tab(int fd, int **map,t_render_data *render_data)
         line = ft_get_next_line(fd);
         i++;
     }
-    return (map);
+    return (render_data->size->map);
 }
 
-void	show_maps(t_render_data *render_data, int **map)
+void	show_maps(t_render_data *render_data)
 {
 	int i;
 	int y;
@@ -203,7 +203,7 @@ void	show_maps(t_render_data *render_data, int **map)
 		ft_printf("\n");
 		while(y < render_data->size->width)
 		{
-			ft_printf("%d ", map[i][y]);
+			ft_printf("%d ", render_data->size->map[i][y]);
 			y++;
 		}
 		i++;
