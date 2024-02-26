@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/12 12:03:01 by gchamore          #+#    #+#             */
-/*   Updated: 2024/02/23 17:08:57 by gchamore         ###   ########.fr       */
+/*   Updated: 2024/02/26 16:49:39 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ t_render_data *create_render_data()
     t_render_data *render_data = malloc(sizeof(t_render_data));
     if (render_data)
 	{
-		render_data->rotation_data = malloc(sizeof(t_rotation_data));
+		render_data->mooves = malloc(sizeof(t_mooves));
         render_data->data = malloc(sizeof(t_data));
 		render_data->size = malloc(sizeof(t_size));
     }
@@ -54,8 +54,6 @@ int main(int argc, char **argv)
     fd = open(argv[1], O_RDONLY);
     render_data->size->map = fill_tab(fd, render_data);
 	show_maps(render_data);
-    get_coordinates_from_map(render_data);
-	get_pivot(render_data);
 	// ft_printf("\nmax -> x = %d && max ->  y = %d\n", render_data->size->max_x, render_data->size->max_y);
 	// ft_printf("\nmid -> x = %d && mid ->  y = %d\n", render_data->size->mid_x, render_data->size->mid_y);
 	// ft_printf("\nmid_win -> x = %d && mid_win ->  y = %d\n", WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -85,7 +83,7 @@ void	ft_free_tab(int **test , int height)
 
 void free_render_data(t_render_data *render_data)
 {
-    	free(render_data->rotation_data);
+    	free(render_data->mooves);
     	free(render_data->data);
 		free(render_data->points);
 		free(render_data->size);

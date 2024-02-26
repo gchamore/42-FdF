@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/12 12:02:55 by gchamore          #+#    #+#             */
-/*   Updated: 2024/02/23 17:03:47 by gchamore         ###   ########.fr       */
+/*   Updated: 2024/02/26 16:50:59 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,14 +92,16 @@ typedef struct s_rect
     int color;
 }	t_rect;
 
-typedef struct s_rotation_data
+typedef struct s_mooves
 {
-    double angle;
-}	t_rotation_data;
+	double			angle;
+    double			z_scale_factor;
+	double			scale_factor;
+}	t_mooves;
 
 typedef struct s_render_data
 {
-	t_rotation_data *rotation_data;
+	t_mooves		*mooves;
     t_data			*data;
     t_point2D		*points;
     t_size			*size;
@@ -130,7 +132,10 @@ int			ft_is_delimiter(char c);
 void			init_min_max(t_render_data *render_data);
 void			get_min_max(t_render_data *render_data);
 void			get_pivot(t_render_data *render_data);
+void			put_middle_window(t_render_data *render_data);
 void			get_coordinates_from_map(t_render_data *render_data);
+void			put_middle_map(t_render_data *render_data);
+
 
 
 //#################################
@@ -162,8 +167,11 @@ int				pixel_brain(char *argv, t_render_data *render_data);
 //#	    	   	 MOOVES	 	      #
 //#################################
 
-void			rotate_points_3d(t_render_data *render_data, int num_points, double angle);
-void			rotate_points(t_render_data *render_data, int num_points, double angle);
+// void			rotate_projection_horizontal(t_render_data *render_data, double rotation_step);
+// void			rotate_projection_vertical(t_render_data *render_data, double rotation_step);
+void			update_coordinates_and_pivot(t_render_data *render_data);
+void			move_points_x(t_render_data *render_data, double distance_x);
+void			move_points_y(t_render_data *render_data, double sign);
 
 
 

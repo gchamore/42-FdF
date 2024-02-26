@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 15:17:52 by gchamore          #+#    #+#             */
-/*   Updated: 2024/02/23 16:53:45 by gchamore         ###   ########.fr       */
+/*   Updated: 2024/02/26 16:50:52 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,9 +152,13 @@ int pixel_brain(char *argv, t_render_data *render_data)
         return (MLX_ERROR);
     render_data->data->img.mlx_img = mlx_new_image(render_data->data->mlx_ptr, WINDOW_WIDTH, WINDOW_HEIGHT);
     render_data->data->img.addr = mlx_get_data_addr(render_data->data->img.mlx_img, &render_data->data->img.bpp, &render_data->data->img.line_len, &render_data->data->img.endian);
+	render_data->mooves->angle = 0.0;
+    render_data->mooves->scale_factor = 15.0;
+    render_data->mooves->z_scale_factor = 1.0;
+	get_coordinates_from_map(render_data);
+	put_middle_window(render_data);
+	get_pivot(render_data);
 	mlx_loop_hook(render_data->data->mlx_ptr, ft_render, render_data);
-	render_data->rotation_data->angle = 0.0;
-	// mlx_key_hook(data->win_ptr, handle_rotation, &data);
 	mlx_key_hook(render_data->data->win_ptr, handle_keypress, render_data);
     mlx_loop(render_data->data->mlx_ptr);
     mlx_destroy_image(render_data->data->mlx_ptr, render_data->data->img.mlx_img);
