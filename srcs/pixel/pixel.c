@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 15:17:52 by gchamore          #+#    #+#             */
-/*   Updated: 2024/02/26 16:50:52 by gchamore         ###   ########.fr       */
+/*   Updated: 2024/02/27 16:27:44 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,47 +72,47 @@ void ft_render_line(t_img *img, int x0, int y0, int x1, int y1, int color)
     }
 }
 
-void ft_render_dot(t_render_data *render_data)
+void ft_render_dot(t_env *env)
 {
     int i;
 	int j;
 
 	i = 0;
 	j = 0;
-    while (i < render_data->size->height)
+    while (i < env->size->height)
     {
         j = 0;
-        while (j < render_data->size->width - 1)
+        while (j < env->size->width - 1)
         {
-            int index1 = i * render_data->size->width + j;
-            int index2 = i * render_data->size->width + (j + 1);
-            ft_render_line(&(render_data->data->img), render_data->points[index1].x, render_data->points[index1].y, render_data->points[index2].x, render_data->points[index2].y, WHITE_PIXEL);
+            int index1 = i * env->size->width + j;
+            int index2 = i * env->size->width + (j + 1);
+            ft_render_line(&(env->data->img), env->points[index1].x, env->points[index1].y, env->points[index2].x, env->points[index2].y, WHITE_PIXEL);
             j++;
         }
         i++;
     }
     j = 0;
-    while (j < render_data->size->width)
+    while (j < env->size->width)
     {
         i = 0;
-        while (i < render_data->size->height - 1)
+        while (i < env->size->height - 1)
         {
-            int index1 = i * render_data->size->width + j;
-            int index2 = (i + 1) * render_data->size->width + j;
-            ft_render_line(&(render_data->data->img), render_data->points[index1].x, render_data->points[index1].y, render_data->points[index2].x, render_data->points[index2].y, WHITE_PIXEL);
+            int index1 = i * env->size->width + j;
+            int index2 = (i + 1) * env->size->width + j;
+            ft_render_line(&(env->data->img), env->points[index1].x, env->points[index1].y, env->points[index2].x, env->points[index2].y, WHITE_PIXEL);
             i++;
         }
         j++;
     }
 }
 
-int ft_render(t_render_data *render_data)
+int ft_render(t_env *env)
 {
-    if (render_data->data->win_ptr == NULL)
+    if (env->data->win_ptr == NULL)
         return (1);
-    render_background(&(render_data->data->img), render_data->color);
-    ft_render_dot(render_data);
-    mlx_put_image_to_window(render_data->data->mlx_ptr, render_data->data->win_ptr, render_data->data->img.mlx_img, 0, 0);
+    render_background(&(env->data->img), env->color);
+    ft_render_dot(env);
+    mlx_put_image_to_window(env->data->mlx_ptr, env->data->win_ptr, env->data->img.mlx_img, 0, 0);
     return (0);
 }
 
@@ -142,27 +142,26 @@ void	img_pix_put(t_img *img, int x, int y, int color)
 	}
 }
 
-int pixel_brain(char *argv, t_render_data *render_data)
+int pixel_brain(char *argv, t_env *env)
 {
-    render_data->data->mlx_ptr = mlx_init();
-    if (render_data->data->mlx_ptr == NULL)
+    env->data->mlx_ptr = mlx_init();
+    if (env->data->mlx_ptr == NULL)
         return (MLX_ERROR);
-    render_data->data->win_ptr = mlx_new_window(render_data->data->mlx_ptr, WINDOW_WIDTH, WINDOW_HEIGHT, argv);
-    if (render_data->data->win_ptr == NULL)
+    env->data->win_ptr = mlx_new_window(env->data->mlx_ptr, WINDOW_WIDTH, WINDOW_HEIGHT, argv);
+    if (env->data->win_ptr == NULL)
         return (MLX_ERROR);
-    render_data->data->img.mlx_img = mlx_new_image(render_data->data->mlx_ptr, WINDOW_WIDTH, WINDOW_HEIGHT);
-    render_data->data->img.addr = mlx_get_data_addr(render_data->data->img.mlx_img, &render_data->data->img.bpp, &render_data->data->img.line_len, &render_data->data->img.endian);
-	render_data->mooves->angle = 0.0;
-    render_data->mooves->scale_factor = 15.0;
-    render_data->mooves->z_scale_factor = 1.0;
-	get_coordinates_from_map(render_data);
-	put_middle_window(render_data);
-	get_pivot(render_data);
-	mlx_loop_hook(render_data->data->mlx_ptr, ft_render, render_data);
-	mlx_key_hook(render_data->data->win_ptr, handle_keypress, render_data);
-    mlx_loop(render_data->data->mlx_ptr);
-    mlx_destroy_image(render_data->data->mlx_ptr, render_data->data->img.mlx_img);
-    mlx_destroy_display(render_data->data->mlx_ptr);
-	free(render_data->data->mlx_ptr);
+    env->data->img.mlx_img = mlx_new_image(env->data->mlx_ptr, WINDOW_WIDTH, WINDOW_HEIGHT);
+    env->data->img.addr = mlx_get_data_addr(env->data->img.mlx_img, &env->data->img.bpp, &env->data->img.line_len, &env->data->img.endian);
+	get_coordinates_from_map(env);
+	put_middle_window(env);
+	get_pivot(env);
+	mlx_loop_hook(env->data->mlx_ptr, ft_render, env);
+	mlx_key_hook(env->data->win_ptr, handle_keypress, env);
+	mlx_mouse_hook(env->data->win_ptr, handle_mouse, env);
+	mlx_hook(env->data->win_ptr, DestroyNotify, StructureNotifyMask, destroy_red_cross, env);
+    mlx_loop(env->data->mlx_ptr);
+    mlx_destroy_image(env->data->mlx_ptr, env->data->img.mlx_img);
+    mlx_destroy_display(env->data->mlx_ptr);
+	free(env->data->mlx_ptr);
     return (0);
 }

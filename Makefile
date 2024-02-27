@@ -6,7 +6,7 @@
 #    By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/12 09:49:54 by gchamore          #+#    #+#              #
-#    Updated: 2024/02/26 15:10:05 by gchamore         ###   ########.fr        #
+#    Updated: 2024/02/27 12:02:05 by gchamore         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,13 +14,17 @@ NAME = fdf
 
 CC = cc
 
-CFLAGS = -Wall -Wextra -Werror -g3 -I./headers/
+CFLAGS = -Wall -Wextra -Werror -g3 -Iheaders
 
 RM = rm -rf
 
 SRCS = $(addprefix srcs/, fdf.c parsing/parsing.c pixel/pixel.c mooves/mooves.c data/dots.c)
 
-OBJS = $(SRCS:.c=.o)
+OBJ_DIR = objs
+
+OBJS = $(addprefix $(OBJ_DIR)/, $(SRCS:.c=.o))
+
+DEPS = $(OBJS:.o=.d)
 
 all: first_header $(NAME) second_header
 
@@ -29,10 +33,14 @@ $(NAME): $(OBJS)
 	$(MAKE) -sC ./minilibx
 	$(CC) $(CFLAGS) -o $@ $^ libft/libft.a minilibx/libmlx.a -lXext -lX11 -lm
 
+$(OBJ_DIR)/%.o: %.c
+	@mkdir -p $(@D)
+	$(CC)  $(CFLAGS) -MMD -c -o $@ $<
+
 clean:
 	$(MAKE) clean -sC ./libft
 	$(MAKE) clean -sC ./minilibx
-	$(RM) $(OBJS)
+	$(RM) $(OBJS) $(OBJ_DIR)
 
 fclean: clean
 	$(MAKE) fclean -C ./libft
@@ -44,8 +52,11 @@ re: fclean all
 
 info: header
 
+-include $(DEPS)
+
 first_header:
 	@echo "\n $$FIRST_HEADER \n"
+
 
 define FIRST_HEADER
 

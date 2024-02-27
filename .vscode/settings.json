@@ -2,6 +2,7 @@
 	"files.associations": {
 		"fdf.h": "c",
 		"errno.h": "c",
-		"x.h": "c"
+		"x.h": "c",
+		"cmath": "c"
 	}
 }

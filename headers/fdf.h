@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/12 12:02:55 by gchamore          #+#    #+#             */
-/*   Updated: 2024/02/26 16:50:59 by gchamore         ###   ########.fr       */
+/*   Updated: 2024/02/27 16:46:04 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,23 @@
 # include <X11/keysym.h>
 # include <mlx.h>
 
+
+typedef struct	s_tools
+{
+    int x;
+	int y;
+	int i;
+    int mid_win_x;
+	int mid_win_y;
+	double delta_x;
+	double delta_y;
+	double	new_mid_x;
+	double	new_mid_y;
+	int j;
+	int	n;
+	double	temp_x;
+	double	temp_y;
+}	t_tools;
 
 typedef struct s_size
 {
@@ -94,28 +111,34 @@ typedef struct s_rect
 
 typedef struct s_mooves
 {
-	double			angle;
+	double			angle_x;
+	double			angle_y;
     double			z_scale_factor;
+	double			z_scale_step;
 	double			scale_factor;
+	double			rotation_step;
+	double			rotation_angle;
+	int				sign;
+	int				step;
 }	t_mooves;
 
-typedef struct s_render_data
+typedef struct s_env
 {
 	t_mooves		*mooves;
     t_data			*data;
     t_point2D		*points;
     t_size			*size;
     int				color;
-}	t_render_data;
+}	t_env;
 
 
 //#################################
 //#	    	   PARSING		      #
 //#################################
 
-void		show_maps(t_render_data *render_data);
-int			**fill_tab(int fd, t_render_data *render_data);
-void		ft_get_size(char *file, t_render_data *render_data);
+void		show_maps(t_env *render_data);
+int			**fill_tab(int fd, t_env *render_data);
+void		ft_get_size(char *file, t_env *render_data);
 char		**ft_mod_split(char *str);
 void		*ft_verif_str(char **split, char *str);
 int			ft_count_rows(char	**tab);
@@ -129,12 +152,12 @@ int			ft_is_delimiter(char c);
 //#	    	   	 DOTS	 	      #
 //#################################
 
-void			init_min_max(t_render_data *render_data);
-void			get_min_max(t_render_data *render_data);
-void			get_pivot(t_render_data *render_data);
-void			put_middle_window(t_render_data *render_data);
-void			get_coordinates_from_map(t_render_data *render_data);
-void			put_middle_map(t_render_data *render_data);
+void			init_min_max(t_env *render_data);
+void			get_min_max(t_env *render_data);
+void			get_pivot(t_env *render_data);
+void			put_middle_window(t_env *render_data);
+void			get_coordinates_from_map(t_env *render_data);
+void			put_middle_map(t_env *render_data);
 
 
 
@@ -142,12 +165,12 @@ void			put_middle_map(t_render_data *render_data);
 //#	    	   	 FDF	 	      #
 //#################################
 
-t_render_data	*create_render_data();
-void			init_structs(t_render_data *render_data);
-int				handle_keypress(int keysym, t_render_data *render_data);
+t_env	*create_render_data();
+void			init_structs(t_env *render_data);
+int				handle_keypress(int keysym, t_env *render_data);
 int				main(int argc, char **argv);
 void			ft_free_tab(int **test , int height);
-void			free_render_data(t_render_data *render_data);
+void			free_render_data(t_env *render_data);
 
 
 //#################################
@@ -157,22 +180,23 @@ void			free_render_data(t_render_data *render_data);
 void			render_background(t_img *img, int color);
 int				my_abs(int c);
 void			ft_render_line(t_img *img, int x0, int y0, int x1, int y1, int color);
-void			ft_render_dot(t_render_data *render_data);
-int				ft_render(t_render_data *render_data);
+void			ft_render_dot(t_env *render_data);
+int				ft_render(t_env *render_data);
 void			ft_img_pix_put(t_img *img, int x, int y, int color);
 void			img_pix_put(t_img *img, int x, int y, int color);
-int				pixel_brain(char *argv, t_render_data *render_data);
+int				pixel_brain(char *argv, t_env *render_data);
 
 //#################################
 //#	    	   	 MOOVES	 	      #
 //#################################
 
-// void			rotate_projection_horizontal(t_render_data *render_data, double rotation_step);
-// void			rotate_projection_vertical(t_render_data *render_data, double rotation_step);
-void			update_coordinates_and_pivot(t_render_data *render_data);
-void			move_points_x(t_render_data *render_data, double distance_x);
-void			move_points_y(t_render_data *render_data, double sign);
-
+void			rotate_isometric_projection(t_env *env, double rotation_angle);
+void			update_coordinates_and_pivot(t_env *render_data);
+void			move_points_x(t_env *env, int sign);
+void			move_points_y(t_env *env, int sign);
+void			space_reset(t_env *env);
+int				destroy_red_cross(t_env *env);
+int				handle_mouse(int button, int x, int y, t_env *env);
 
 
 #endif

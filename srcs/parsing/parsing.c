@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/13 14:38:36 by gchamore          #+#    #+#             */
-/*   Updated: 2024/02/23 10:13:38 by gchamore         ###   ########.fr       */
+/*   Updated: 2024/02/27 12:45:44 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,7 +129,7 @@ char	**ft_mod_split(char *str)
 }
 
 
-void	ft_get_size(char *file, t_render_data *render_data)
+void	ft_get_size(char *file, t_env *env)
 {
 	int		fd;
 	int		ct;
@@ -142,11 +142,11 @@ void	ft_get_size(char *file, t_render_data *render_data)
 	line = ft_get_next_line(fd);
 	if (!line)
 		return ;
-	render_data->size->width = ft_words_count(line);
+	env->size->width = ft_words_count(line);
 	while (line != 0)
 	{
-		if (render_data->size->width != 0)
-		render_data->size->height++;
+		if (env->size->width != 0)
+		env->size->height++;
 		free(line);
 		line = ft_get_next_line(fd);
 	}
@@ -154,7 +154,7 @@ void	ft_get_size(char *file, t_render_data *render_data)
 }
 
 
-int **fill_tab(int fd, t_render_data *render_data)
+int **fill_tab(int fd, t_env *env)
 {
     char **split;
     char *line;
@@ -167,19 +167,19 @@ int **fill_tab(int fd, t_render_data *render_data)
     line = ft_get_next_line(fd);
     if (!line)
         return (0);
-    render_data->size->map = malloc(sizeof(int *) * render_data->size->height);
-    if (!render_data->size->map)
+    env->size->map = malloc(sizeof(int *) * env->size->height);
+    if (!env->size->map)
         return (0);
-    while (i < render_data->size->height)
+    while (i < env->size->height)
     {
-        render_data->size->map[i] = malloc(sizeof(int) * render_data->size->width);
-        if (!render_data->size->map[i])
+        env->size->map[i] = malloc(sizeof(int) * env->size->width);
+        if (!env->size->map[i])
             return (0);
         y = 0;
         split = ft_mod_split(line);
-        while (y < render_data->size->width)
+        while (y < env->size->width)
         {
-			render_data->size->map[i][y] = ft_atoi(split[y]);
+			env->size->map[i][y] = ft_atoi(split[y]);
             y++;
         }
         free(line);
@@ -187,23 +187,23 @@ int **fill_tab(int fd, t_render_data *render_data)
         line = ft_get_next_line(fd);
         i++;
     }
-    return (render_data->size->map);
+    return (env->size->map);
 }
 
-void	show_maps(t_render_data *render_data)
+void	show_maps(t_env *env)
 {
 	int i;
 	int y;
 
 	i = 0;
 	ft_printf("\nMAP = \n");
-	while(i < render_data->size->height)
+	while(i < env->size->height)
 	{
 		y = 0;
 		ft_printf("\n");
-		while(y < render_data->size->width)
+		while(y < env->size->width)
 		{
-			ft_printf("%d ", render_data->size->map[i][y]);
+			ft_printf("%d ", env->size->map[i][y]);
 			y++;
 		}
 		i++;
