@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/12 12:03:01 by gchamore          #+#    #+#             */
-/*   Updated: 2024/02/27 16:24:11 by gchamore         ###   ########.fr       */
+/*   Updated: 2024/03/05 13:26:21 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,11 @@ void	init_structs(t_env *env)
 {
 	env->size->height = 0;
 	env->size->width = 0;
-	env->mooves->angle_x = (sqrt(3) / 2);
-	env->mooves->angle_y = (sqrt(3) / 2);
-    env->mooves->scale_factor = 15.0;
-    env->mooves->z_scale_factor = 0.8;
+	env->mooves->angle_x = M_PI / 6;
+	env->mooves->angle_y = M_PI / 6;
+	env->mooves->angle_z = 0;
+    env->mooves->scale_factor = 30.0;
+    env->mooves->z_scale_factor = 0.4;
 	env->mooves->step = 10;
 	env->mooves->sign = 1;
 	env->mooves->rotation_step = 0.1;
@@ -59,16 +60,13 @@ int main(int argc, char **argv)
     }
     ft_get_size(argv[1], env);
     env->points = malloc(sizeof(t_point2D) * (env->size->height * env->size->width));
-    if (!env->points)
+    env->points_3D = malloc(sizeof(t_point3D) * (env->size->height * env->size->width));
+	if (!env->points)
         return (0);
     fd = open(argv[1], O_RDONLY);
     env->size->map = fill_tab(fd, env);
 	show_maps(env);
 	close(fd);
-	// ft_printf("\nmax -> x = %d && max ->  y = %d\n", env->size->max_x, env->size->max_y);
-	// ft_printf("\nmid -> x = %d && mid ->  y = %d\n", env->size->mid_x, env->size->mid_y);
-	// ft_printf("\nmid_win -> x = %d && mid_win ->  y = %d\n", WINDOW_WIDTH, WINDOW_HEIGHT);
-    // ft_printf("x = %d && y = %d\n", env->points[0].x, env->points[0].y);
     pixel_brain(argv[1], env);
 	ft_free_tab(env->size->map, env->size->height);
 	free_render_data(env);
@@ -97,5 +95,6 @@ void free_render_data(t_env *env)
     free(env->data);
 	free(env->points);
 	free(env->size);
+	free(env->points_3D);
     free(env);
 }

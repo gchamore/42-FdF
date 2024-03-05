@@ -6,16 +6,27 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/12 12:02:55 by gchamore          #+#    #+#             */
-/*   Updated: 2024/02/27 16:46:04 by gchamore         ###   ########.fr       */
+/*   Updated: 2024/03/05 15:58:32 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FDF_H
 # define FDF_H
 
-#define WINDOW_WIDTH 1920
-#define WINDOW_HEIGHT 1080
+// 4320p (8K) : 7 680 x 4 320.
+// 2160p (4K) : 3 840 x 2 160.
+// 1440p (2K) : 2 560 x 1 440.
+// 1080p (HD) : 1 920 x 1 080.
+// 720p (HD) : 1 280 x 7 20.
+// 480p (SD) : 854 x 480.
+// 360p (SD) : 640 x 360.
+// 240p (SD) : 426 x 240.
 
+#define WINDOW_WIDTH 854
+#define WINDOW_HEIGHT 480
+#define SCALE_FACTOR_MAX 70
+#define SCALE_FACTOR_MIN 1
+#define M_PI 3.14159265358979323846
 
 // colors
 
@@ -71,8 +82,10 @@ typedef struct s_size
 	int			width;
 	int			max_x;
 	int			max_y;
+	int			max_z;
 	int			min_x;
 	int			min_y;
+	int			min_z;
 	int			mid_x;
 	int			mid_y;
 }	t_size;
@@ -82,6 +95,14 @@ typedef struct	s_point2D
 	double	x;
 	double	y;
 }	t_point2D;
+
+typedef struct	s_point3D
+{
+    double	x;
+    double	y;
+    double	z;
+	int		color;
+}	t_point3D;
 
 typedef struct s_img
 {
@@ -113,6 +134,7 @@ typedef struct s_mooves
 {
 	double			angle_x;
 	double			angle_y;
+	double			angle_z;
     double			z_scale_factor;
 	double			z_scale_step;
 	double			scale_factor;
@@ -127,6 +149,7 @@ typedef struct s_env
 	t_mooves		*mooves;
     t_data			*data;
     t_point2D		*points;
+	t_point3D		*points_3D;
     t_size			*size;
     int				color;
 }	t_env;
@@ -190,13 +213,16 @@ int				pixel_brain(char *argv, t_env *render_data);
 //#	    	   	 MOOVES	 	      #
 //#################################
 
-void			rotate_isometric_projection(t_env *env, double rotation_angle);
 void			update_coordinates_and_pivot(t_env *render_data);
 void			move_points_x(t_env *env, int sign);
 void			move_points_y(t_env *env, int sign);
 void			space_reset(t_env *env);
 int				destroy_red_cross(t_env *env);
 int				handle_mouse(int button, int x, int y, t_env *env);
+void			rotate_point_x(t_point3D *points_3D, double angle);
+void			rotate_point_y(t_point3D *points_3D, double angle);
+void			rotate_point_z(t_point3D *points_3D, double angle);
+void			verify_size(t_env *env);
 
 
 #endif
