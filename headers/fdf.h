@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/12 12:02:55 by gchamore          #+#    #+#             */
-/*   Updated: 2024/03/05 15:58:32 by gchamore         ###   ########.fr       */
+/*   Updated: 2024/03/06 15:11:05 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@
 #define SCALE_FACTOR_MIN 1
 #define M_PI 3.14159265358979323846
 
-// colors
+// colors classiques
 
 #define BLACK_PIXEL 0x000000   // Noir
 #define WHITE_PIXEL 0xFFFFFF   // Blanc
@@ -43,6 +43,40 @@
 #define TURQUOISE_PIXEL 0x40E0D0 // Turquoise
 #define GOLD_PIXEL 0xFFD700     // Or
 #define SILVER_PIXEL 0xC0C0C0   // Argent
+
+// map vertes
+#define DARK_GREEN_PIXEL 0x006400             // Vert foncé
+#define MEDIUM_DARK_GREEN_PIXEL 0x228B22      // Vert moyennement foncé
+#define MEDIUM_LIGHT_GREEN_PIXEL 0x3CB371     // Vert moyennement clair
+#define LIGHT_GREEN_PIXEL 0x7FFF00            // Vert clair
+
+// map rouges
+
+#define DARK_RED_PIXEL 0x8B0000               // Rouge foncé
+#define MEDIUM_DARK_RED_PIXEL 0xB22222        // Rouge moyennement foncé
+#define MEDIUM_LIGHT_RED_PIXEL 0xCD5C5C      // Rouge moyennement clair
+#define LIGHT_RED_PIXEL 0xFF6347              // Rouge clair
+
+// map bleu
+
+#define DARK_BLUE_PIXEL 0x00008B              // Bleu foncé
+#define MEDIUM_DARK_BLUE_PIXEL 0x4169E1       // Bleu moyennement foncé
+#define MEDIUM_LIGHT_BLUE_PIXEL 0x4682B4      // Bleu moyennement clair
+#define LIGHT_BLUE_PIXEL 0x87CEEB 
+
+// map oranges
+
+#define DARK_ORANGE_RED_PIXEL 0x8B2500          // Rouge-orangé foncé
+#define MEDIUM_DARK_ORANGE_RED_PIXEL 0xB22222   // Rouge-orangé moyennement foncé
+#define MEDIUM_LIGHT_ORANGE_RED_PIXEL 0xCD5C5C // Rouge-orangé moyennement clair
+#define LIGHT_ORANGE_RED_PIXEL 0xFF6347         // Rouge-orangé clair
+
+// map jaune
+#define DARK_YELLOW_PIXEL 0x8B8B00                // Jaune foncé
+#define MEDIUM_DARK_YELLOW_PIXEL 0xBDB76B         // Jaune moyennement foncé
+#define MEDIUM_LIGHT_YELLOW_PIXEL 0xFFFFE0        // Jaune moyennement clair
+#define LIGHT_YELLOW_PIXEL 0xFFFF00               // Jaune clair
+
 
 #define MLX_ERROR 1
 
@@ -73,6 +107,16 @@ typedef struct	s_tools
 	int	n;
 	double	temp_x;
 	double	temp_y;
+	int	start_x;
+	int	start_y;
+	int end_x;
+	int end_y;
+	int diff_x;
+    int diff_y;
+    int step_x;
+	int step_y;
+	int error;
+	int error2;
 }	t_tools;
 
 typedef struct s_size
@@ -142,6 +186,12 @@ typedef struct s_mooves
 	double			rotation_angle;
 	int				sign;
 	int				step;
+	int				color;
+	int				color_choice;
+	int				color1;
+	int				color2;
+	int				color3;
+	int				color4;
 }	t_mooves;
 
 typedef struct s_env
@@ -151,7 +201,7 @@ typedef struct s_env
     t_point2D		*points;
 	t_point3D		*points_3D;
     t_size			*size;
-    int				color;
+    int				*color;
 }	t_env;
 
 
@@ -159,9 +209,9 @@ typedef struct s_env
 //#	    	   PARSING		      #
 //#################################
 
-void		show_maps(t_env *render_data);
-int			**fill_tab(int fd, t_env *render_data);
-void		ft_get_size(char *file, t_env *render_data);
+void		show_maps(t_env *e);
+int			**fill_tab(int fd, t_env *e);
+int			ft_get_size(char *file, t_env *e);
 char		**ft_mod_split(char *str);
 void		*ft_verif_str(char **split, char *str);
 int			ft_count_rows(char	**tab);
@@ -175,12 +225,12 @@ int			ft_is_delimiter(char c);
 //#	    	   	 DOTS	 	      #
 //#################################
 
-void			init_min_max(t_env *render_data);
-void			get_min_max(t_env *render_data);
-void			get_pivot(t_env *render_data);
-void			put_middle_window(t_env *render_data);
-void			get_coordinates_from_map(t_env *render_data);
-void			put_middle_map(t_env *render_data);
+void			init_min_max(t_env *e);
+void			get_min_max(t_env *e);
+void			get_pivot(t_env *e);
+void			put_middle_window(t_env *e);
+void			get_coordinates_from_map(t_env *e);
+void			put_middle_map(t_env *e);
 
 
 
@@ -188,12 +238,12 @@ void			put_middle_map(t_env *render_data);
 //#	    	   	 FDF	 	      #
 //#################################
 
-t_env	*create_render_data();
-void			init_structs(t_env *render_data);
-int				handle_keypress(int keysym, t_env *render_data);
+t_env			*create_env();
+void			init_structs(t_env *e);
+int				handle_keypress(int keysym, t_env *e);
 int				main(int argc, char **argv);
 void			ft_free_tab(int **test , int height);
-void			free_render_data(t_env *render_data);
+void			free_env(t_env *e);
 
 
 //#################################
@@ -202,27 +252,30 @@ void			free_render_data(t_env *render_data);
 
 void			render_background(t_img *img, int color);
 int				my_abs(int c);
-void			ft_render_line(t_img *img, int x0, int y0, int x1, int y1, int color);
-void			ft_render_dot(t_env *render_data);
-int				ft_render(t_env *render_data);
+void			ft_render_line(t_img *img, t_env *e, int index1, int index2);
+void			ft_render_dot(t_env *e);
+int				ft_render(t_env *e);
 void			ft_img_pix_put(t_img *img, int x, int y, int color);
 void			img_pix_put(t_img *img, int x, int y, int color);
-int				pixel_brain(char *argv, t_env *render_data);
+int				pixel_brain(char *argv, t_env *e);
 
 //#################################
 //#	    	   	 MOOVES	 	      #
 //#################################
 
-void			update_coordinates_and_pivot(t_env *render_data);
-void			move_points_x(t_env *env, int sign);
-void			move_points_y(t_env *env, int sign);
-void			space_reset(t_env *env);
-int				destroy_red_cross(t_env *env);
-int				handle_mouse(int button, int x, int y, t_env *env);
+void			update_coordinates_and_pivot(t_env *e);
+void			move_points_x(t_env *e, int sign);
+void			move_points_y(t_env *e, int sign);
+void			space_reset(t_env *e);
+int				destroy_red_cross(t_env *e);
+int				handle_mouse(int button, int x, int y, t_env *e);
 void			rotate_point_x(t_point3D *points_3D, double angle);
 void			rotate_point_y(t_point3D *points_3D, double angle);
 void			rotate_point_z(t_point3D *points_3D, double angle);
-void			verify_size(t_env *env);
+void			verify_size(t_env *e);
+void			ft_check_z(t_env *e, int x, int y);
+void			ft_choose_color(t_env *e);
+int				get_percent(int max, int min, int z);
 
 
 #endif

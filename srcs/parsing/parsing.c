@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/13 14:38:36 by gchamore          #+#    #+#             */
-/*   Updated: 2024/03/05 13:44:45 by gchamore         ###   ########.fr       */
+/*   Updated: 2024/03/06 15:11:53 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,7 +129,7 @@ char	**ft_mod_split(char *str)
 }
 
 
-void	ft_get_size(char *file, t_env *env)
+int	ft_get_size(char *file, t_env *e)
 {
 	int		fd;
 	int		ct;
@@ -137,24 +137,25 @@ void	ft_get_size(char *file, t_env *env)
 
 	fd = open(file, O_RDONLY);
 	if (fd == -1)
-		return ;
+		return (0);
 	ct = 0;
 	line = ft_get_next_line(fd);
 	if (!line)
-		return ;
-	env->size->width = ft_words_count(line);
+		return (0);
+	e->size->width = ft_words_count(line);
 	while (line != 0)
 	{
-		if (env->size->width != 0)
-		env->size->height++;
+		if (e->size->width != 0)
+		e->size->height++;
 		free(line);
 		line = ft_get_next_line(fd);
 	}
 	close(fd);
+	return (1);
 }
 
 
-int **fill_tab(int fd, t_env *env)
+int **fill_tab(int fd, t_env *e)
 {
     char **split;
     char *line;
@@ -167,19 +168,19 @@ int **fill_tab(int fd, t_env *env)
     line = ft_get_next_line(fd);
     if (!line)
         return (0);
-    env->size->map = malloc(sizeof(int *) * env->size->height);
-    if (!env->size->map)
+    e->size->map = malloc(sizeof(int *) * e->size->height);
+    if (!e->size->map)
         return (0);
-    while (i < env->size->height)
+    while (i < e->size->height)
     {
-        env->size->map[i] = malloc(sizeof(int) * env->size->width);
-        if (!env->size->map[i])
+        e->size->map[i] = malloc(sizeof(int) * e->size->width);
+        if (!e->size->map[i])
             return (0);
         y = 0;
         split = ft_mod_split(line);
-        while (y < env->size->width)
+        while (y < e->size->width)
         {
-			env->size->map[i][y] = ft_atoi(split[y]);
+			e->size->map[i][y] = ft_atoi(split[y]);
             y++;
         }
         free(line);
@@ -187,23 +188,23 @@ int **fill_tab(int fd, t_env *env)
         line = ft_get_next_line(fd);
         i++;
     }
-    return (env->size->map);
+    return (e->size->map);
 }
 
-void	show_maps(t_env *env)
+void	show_maps(t_env *e)
 {
 	int i;
 	int y;
 
 	i = 0;
 	ft_printf("\nMAP = \n");
-	while(i < env->size->height)
+	while(i < e->size->height)
 	{
 		y = 0;
 		ft_printf("\n");
-		while(y < env->size->width)
+		while(y < e->size->width)
 		{
-			ft_printf("%d ", env->size->map[i][y]);
+			ft_printf("%d ", e->size->map[i][y]);
 			y++;
 		}
 		i++;

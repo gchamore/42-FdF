@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 15:17:52 by gchamore          #+#    #+#             */
-/*   Updated: 2024/03/05 15:58:10 by gchamore         ###   ########.fr       */
+/*   Updated: 2024/03/06 15:11:43 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,84 +35,152 @@ int my_abs(int c)
         return (c);
 }
 
-void ft_render_line(t_img *img, int x0, int y0, int x1, int y1, int color)
+int	get_percent(int max, int min, int z)
 {
-    int diff_x;
-    int diff_y;
-    int step_x;
-	int step_y;
-	int error;
-	int error2;
-	
-	diff_x = my_abs(x1 - x0);
-	diff_y = my_abs(y1 - y0);
-    if (x0 < x1)
-        step_x = 1;
+	int max_temp;
+	int	max_perc;
+	int temp;
+
+	max_temp = max - min;
+	max_perc = 100;
+	temp = (z * max_perc / max_temp);
+	return (temp);
+}
+
+void	ft_choose_color(t_env *e)
+{
+	if (e->mooves->color_choice == 1)
+	{
+		e->mooves->color1 = DARK_GREEN_PIXEL;
+		e->mooves->color2 = MEDIUM_DARK_GREEN_PIXEL;
+		e->mooves->color3 = MEDIUM_LIGHT_GREEN_PIXEL;
+		e->mooves->color4 = LIGHT_GREEN_PIXEL;
+	}
+	else if (e->mooves->color_choice == 2)
+	{
+		e->mooves->color1 = DARK_YELLOW_PIXEL;
+		e->mooves->color2 = MEDIUM_DARK_YELLOW_PIXEL;
+		e->mooves->color3 = MEDIUM_LIGHT_YELLOW_PIXEL;
+		e->mooves->color4 = LIGHT_YELLOW_PIXEL;
+	}
+	else if (e->mooves->color_choice == 3)
+	{
+		e->mooves->color1 = DARK_BLUE_PIXEL;
+		e->mooves->color2 = MEDIUM_DARK_BLUE_PIXEL;
+		e->mooves->color3 = MEDIUM_LIGHT_BLUE_PIXEL;
+		e->mooves->color4 = LIGHT_BLUE_PIXEL;
+	}
+	else if (e->mooves->color_choice == 4)
+	{
+		e->mooves->color1 = DARK_ORANGE_RED_PIXEL;
+		e->mooves->color2 = MEDIUM_DARK_ORANGE_RED_PIXEL;
+		e->mooves->color3 = MEDIUM_LIGHT_ORANGE_RED_PIXEL;
+		e->mooves->color4 = LIGHT_ORANGE_RED_PIXEL;
+	}
+}
+
+void	ft_check_z(t_env *e, int x, int y)
+{
+	int z;
+
+	z = 0;
+	z = get_percent(e->size->max_z, e->size->min_z, e->size->map[x][y]);
+	ft_choose_color(e);
+	if (z >= 0 && z < 20)
+		e->mooves->color = e->mooves->color1;
+	else if (z >= 20 && z <= 50)
+		e->mooves->color = e->mooves->color2;
+	else if (z > 50 && z <= 80)
+		e->mooves->color = e->mooves->color3;
+	else if (z > 80 && z <= 100)
+		e->mooves->color = e->mooves->color4;
+}
+
+void ft_render_line(t_img *img, t_env *e, int index1, int index2)
+{
+    t_tools v;
+    
+    v.start_x = e->points[index1].x;
+    v.start_y = e->points[index1].y;
+    v.end_x = e->points[index2].x;
+    v.end_y = e->points[index2].y;
+    v.diff_x = my_abs(v.end_x - v.start_x);
+    v.diff_y = my_abs(v.end_y - v.start_y);
+    if (v.start_x < v.end_x)
+        v.step_x = 1;
     else
-        step_x = -1;
-    if (y0 < y1)
-        step_y = 1;
+        v.step_x = -1;
+    if (v.start_y < v.end_y)
+        v.step_y = 1;
     else
-        step_y = -1;
-    error = diff_x - diff_y;
-    while (x0 != x1 || y0 != y1)
-    {
-        ft_img_pix_put(img, x0, y0, color);
-        error2 = 2 * error;
-        if (error2 > -diff_y)
-        {
-            error -= diff_y;
-            x0 += step_x;
+        v.step_y = -1;
+    v.error = v.diff_x - v.diff_y;
+    while (v.start_x != v.end_x || v.start_y != v.end_y)
+	{
+        ft_img_pix_put(img, v.start_x, v.start_y, e->mooves->color);
+        v.error2 = 2 * v.error;
+        if (v.error2 > -v.diff_y)
+		{
+            v.error -= v.diff_y;
+            v.start_x += v.step_x;
         }
-        if (error2 < diff_x)
-        {
-            error += diff_x;
-            y0 += step_y;
+        if (v.error2 < v.diff_x)
+		{
+            v.error += v.diff_x;
+            v.start_y += v.step_y;
         }
     }
 }
 
-void ft_render_dot(t_env *env)
+void ft_render_dot(t_env *e)
 {
-    int i;
-	int j;
+    int x;
+	int y;
+	int z;
+	int index1;
+	int index2;
 
-	i = 0;
-	j = 0;
-    while (i < env->size->height)
+	x = 0;
+	y = 0;
+	z = 0;
+    while (x < e->size->height)
     {
-        j = 0;
-        while (j < env->size->width - 1)
+        y = 0;
+        while (y < e->size->width - 1)
         {
-            int index1 = i * env->size->width + j;
-            int index2 = i * env->size->width + (j + 1);
-            ft_render_line(&(env->data->img), env->points[index1].x, env->points[index1].y, env->points[index2].x, env->points[index2].y, WHITE_PIXEL);
-            j++;
+            index1 = x * e->size->width + y;
+            index2 = x * e->size->width + (y + 1);
+			ft_check_z(e, x, y);
+			ft_check_z(e, x, y + 1);
+            ft_render_line(&(e->data->img), e, index1, index2);
+            y++;
         }
-        i++;
+        x++;
     }
-    j = 0;
-    while (j < env->size->width)
+    y = 0;
+    while (y < e->size->width)
     {
-        i = 0;
-        while (i < env->size->height - 1)
+        x = 0;
+        while (x < e->size->height - 1)
         {
-            int index1 = i * env->size->width + j;
-            int index2 = (i + 1) * env->size->width + j;
-            ft_render_line(&(env->data->img), env->points[index1].x, env->points[index1].y, env->points[index2].x, env->points[index2].y, WHITE_PIXEL);
-            i++;
+            index1 = x * e->size->width + y;
+            index2 = (x + 1) * e->size->width + y;
+			ft_check_z(e, x, y);
+			ft_check_z(e, x + 1, y);
+            ft_render_line(&(e->data->img), e, index1, index2);
+            x++;
         }
-        j++;
+        y++;
     }
 }
 
-int ft_render(t_env *env)
+int ft_render(t_env *e)
 {
-    if (env->data->win_ptr == NULL)
+    if (e->data->win_ptr == NULL)
         return (1);
-    render_background(&(env->data->img), env->color);
-    ft_render_dot(env);
-    mlx_put_image_to_window(env->data->mlx_ptr, env->data->win_ptr, env->data->img.mlx_img, 0, 0);
+    render_background(&(e->data->img), BLACK_PIXEL);
+    ft_render_dot(e);
+    mlx_put_image_to_window(e->data->mlx_ptr, e->data->win_ptr, e->data->img.mlx_img, 0, 0);
     return (0);
 }
 
@@ -142,26 +210,26 @@ void	img_pix_put(t_img *img, int x, int y, int color)
 	}
 }
 
-int pixel_brain(char *argv, t_env *env)
+int pixel_brain(char *argv, t_env *e)
 {
-    env->data->mlx_ptr = mlx_init();
-    if (env->data->mlx_ptr == NULL)
+    e->data->mlx_ptr = mlx_init();
+    if (e->data->mlx_ptr == NULL)
         return (MLX_ERROR);
-    env->data->win_ptr = mlx_new_window(env->data->mlx_ptr, WINDOW_WIDTH, WINDOW_HEIGHT, argv);
-    if (env->data->win_ptr == NULL)
+    e->data->win_ptr = mlx_new_window(e->data->mlx_ptr, WINDOW_WIDTH, WINDOW_HEIGHT, argv);
+    if (e->data->win_ptr == NULL)
         return (MLX_ERROR);
-    env->data->img.mlx_img = mlx_new_image(env->data->mlx_ptr, WINDOW_WIDTH, WINDOW_HEIGHT);
-    env->data->img.addr = mlx_get_data_addr(env->data->img.mlx_img, &env->data->img.bpp, &env->data->img.line_len, &env->data->img.endian);
-	get_coordinates_from_map(env);
-	put_middle_window(env);
-	get_pivot(env);
-	mlx_loop_hook(env->data->mlx_ptr, ft_render, env);
-	mlx_key_hook(env->data->win_ptr, handle_keypress, env);
-	mlx_mouse_hook(env->data->win_ptr, handle_mouse, env);
-	mlx_hook(env->data->win_ptr, DestroyNotify, StructureNotifyMask, destroy_red_cross, env);
-    mlx_loop(env->data->mlx_ptr);
-    mlx_destroy_image(env->data->mlx_ptr, env->data->img.mlx_img);
-    mlx_destroy_display(env->data->mlx_ptr);
-	free(env->data->mlx_ptr);
+    e->data->img.mlx_img = mlx_new_image(e->data->mlx_ptr, WINDOW_WIDTH, WINDOW_HEIGHT);
+    e->data->img.addr = mlx_get_data_addr(e->data->img.mlx_img, &e->data->img.bpp, &e->data->img.line_len, &e->data->img.endian);
+	get_coordinates_from_map(e);
+	put_middle_window(e);
+	get_pivot(e);
+	mlx_loop_hook(e->data->mlx_ptr, ft_render, e);
+	mlx_key_hook(e->data->win_ptr, handle_keypress, e);
+	mlx_mouse_hook(e->data->win_ptr, handle_mouse, e);
+	mlx_hook(e->data->win_ptr, DestroyNotify, StructureNotifyMask, destroy_red_cross, e);
+    mlx_loop(e->data->mlx_ptr);
+    mlx_destroy_image(e->data->mlx_ptr, e->data->img.mlx_img);
+    mlx_destroy_display(e->data->mlx_ptr);
+	free(e->data->mlx_ptr);
     return (0);
 }
