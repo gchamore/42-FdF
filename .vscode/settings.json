@@ -3,6 +3,8 @@
 		"fdf.h": "c",
 		"errno.h": "c",
 		"x.h": "c",
-		"cmath": "c"
+		"cmath": "c",
+		"keysym.h": "c",
+		"stdio.h": "c"
 	}
 }
