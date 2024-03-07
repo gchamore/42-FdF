@@ -6,7 +6,7 @@
 #    By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/12 09:49:54 by gchamore          #+#    #+#              #
-#    Updated: 2024/02/27 12:02:05 by gchamore         ###   ########.fr        #
+#    Updated: 2024/03/07 13:55:08 by gchamore         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,7 @@ CFLAGS = -Wall -Wextra -Werror -g3 -Iheaders
 
 RM = rm -rf
 
-SRCS = $(addprefix srcs/, fdf.c parsing/parsing.c pixel/pixel.c mooves/mooves.c data/dots.c)
+SRCS = $(addprefix srcs/, fdf.c  dots/dots_brain.c dots/dots.c dots/dots_utils.c mooves/mooves_brain.c mooves/mooves.c mooves/mooves_utils.c parsing/parsing_brain.c parsing/parsing_utils_1.c parsing/parsing_utils_2.c pixel/pixel_brain.c pixel/pixel_draw.c pixel/pixel_utils.c)
 
 OBJ_DIR = objs
 
