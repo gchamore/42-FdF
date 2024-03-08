@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/07 12:54:25 by gchamore          #+#    #+#             */
-/*   Updated: 2024/03/07 14:08:51 by gchamore         ###   ########.fr       */
+/*   Updated: 2024/03/08 17:21:47 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,11 @@ void	ft_get_min_max(t_env *e)
 	t_tools	v;
 
 	ft_init_min_max(e);
-	v.i = 0;
+	v.i = -1;
 	v.n = 0;
 	while (++v.i < e->size->height)
 	{
-		v.j = 0;
+		v.j = -1;
 		while (++v.j < e->size->width)
 		{
 			if (e->points_2d[v.n].x > e->size->max_x)

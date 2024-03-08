@@ -6,30 +6,42 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/07 13:23:09 by gchamore          #+#    #+#             */
-/*   Updated: 2024/03/07 13:26:15 by gchamore         ###   ########.fr       */
+/*   Updated: 2024/03/08 18:09:05 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/fdf.h"
 
+void	init_keys(t_env *e)
+{
+	int	i;
+
+	i = 0;
+	while (i < NUM_KEYS)
+	{
+		e->bool->keys[i] = false;
+		i++;
+	}
+}
+
 int	ft_check_1(int keysym, t_env *e)
 {
-	if (keysym == XK_D || keysym == XK_d)
+	if (keysym == XK_W || keysym == XK_w)
 	{
 		e->mooves->angle_x += e->mooves->rotation_step;
 		return (ft_get_pivot(e), 1);
 	}
-	else if (keysym == XK_A || keysym == XK_a)
+	else if (keysym == XK_S || keysym == XK_s)
 	{
 		e->mooves->angle_x -= e->mooves->rotation_step;
 		return (ft_get_pivot(e), 1);
 	}
-	else if (keysym == XK_W || keysym == XK_w)
+	else if (keysym == XK_D || keysym == XK_d)
 	{
 		e->mooves->angle_y += e->mooves->rotation_step;
 		return (ft_get_pivot(e), 1);
 	}
-	else if (keysym == XK_S || keysym == XK_s)
+	else if (keysym == XK_A || keysym == XK_a)
 	{
 		e->mooves->angle_y -= e->mooves->rotation_step;
 		return (ft_get_pivot(e), 1);
@@ -49,12 +61,12 @@ int	ft_check_2(int keysym, t_env *e)
 		e->mooves->angle_z += e->mooves->rotation_step;
 		return (ft_get_pivot(e), 1);
 	}
-	else if (keysym == XK_1)
+	else if (keysym == XK_1 && e->mooves->z_sf < 5)
 	{
 		e->mooves->z_sf += e->mooves->z_scale_step;
 		return (1);
 	}
-	else if (keysym == XK_2)
+	else if (keysym == XK_2 && e->mooves->z_sf > -5)
 	{
 		e->mooves->z_sf -= e->mooves->z_scale_step;
 		return (1);
@@ -64,18 +76,18 @@ int	ft_check_2(int keysym, t_env *e)
 
 int	ft_check_3(int keysym, t_env *e)
 {
-	if (keysym == XK_Z || keysym == XK_z)
+	if (keysym == XK_X || keysym == XK_x)
 	{
-		if (e->mooves->color_choice == 4)
+		if (e->mooves->color_choice == 6)
 			e->mooves->color_choice = 1;
 		else
 			e->mooves->color_choice += 1;
 		return (ft_get_pivot(e), 1);
 	}
-	else if (keysym == XK_X || keysym == XK_x)
+	else if (keysym == XK_Z || keysym == XK_z)
 	{
 		if (e->mooves->color_choice == 1)
-			e->mooves->color_choice = 4;
+			e->mooves->color_choice = 6;
 		else
 			e->mooves->color_choice -= 1;
 		return (ft_get_pivot(e), 1);
@@ -95,25 +107,25 @@ int	ft_check_4(int keysym, t_env *e)
 	{
 		ft_move_points_x(e, -e->mooves->sign);
 		ft_get_pivot(e);
-		return (0);
+		return (1);
 	}
 	else if (keysym == XK_Right)
 	{
 		ft_move_points_x(e, e->mooves->sign);
 		ft_get_pivot(e);
-		return (0);
+		return (1);
 	}
 	else if (keysym == XK_Up)
 	{
 		ft_move_points_y(e, -e->mooves->sign);
 		ft_get_pivot(e);
-		return (0);
+		return (1);
 	}
 	else if (keysym == XK_Down)
 	{
 		ft_move_points_y(e, e->mooves->sign);
 		ft_get_pivot(e);
-		return (0);
+		return (1);
 	}
-	return (1);
+	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/12 12:02:55 by gchamore          #+#    #+#             */
-/*   Updated: 2024/03/07 14:07:36 by gchamore         ###   ########.fr       */
+/*   Updated: 2024/03/08 18:12:08 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,25 +24,15 @@
 
 # define WINDOW_WIDTH 854
 # define WINDOW_HEIGHT 480
-# define SCALE_FACTOR_MAX 110
+# define SCALE_FACTOR_MAX 70
 # define SCALE_FACTOR_MIN 1
 # define M_PI 3.14159265358979323846
+# define NUM_KEYS 70000
 
 // colors classiques
 
 # define BLACK_PIXEL 0x000000   // Noir
 # define WHITE_PIXEL 0xFFFFFF   // Blanc
-# define RED_PIXEL 0xFF0000     // Rouge
-# define GREEN_PIXEL 0x00FF00   // Vert
-# define BLUE_PIXEL 0x0000FF    // Bleu
-# define YELLOW_PIXEL 0xFFFF00  // Jaune
-# define ORANGE_PIXEL 0xFFA500  // Orange
-# define GRAY_PIXEL 0x808080     // Gris
-# define PINK_PIXEL 0xFFC0CB     // Rose
-# define MAROON_PIXEL 0x800000   // Marron
-# define TURQUOISE_PIXEL 0x40E0D0 // Turquoise
-# define GOLD_PIXEL 0xFFD700     // Or
-# define SILVER_PIXEL 0xC0C0C0   // Argent
 
 // map vertes
 # define DARK_GREEN_PIXEL 0x006400
@@ -71,6 +61,20 @@
 # define MEDIUM_LIGHT_YELLOW_PIXEL 0xFFFFE0
 # define LIGHT_YELLOW_PIXEL 0xFFFF00
 
+// map fonce
+
+# define VERY_DARK_RED_PIXEL 0x800000   // Rouge foncé
+# define VERY_DARK_GREEN_PIXEL 0x008000 // Vert foncé
+# define VERY_DARK_BLUE_PIXEL 0x000080  // Bleu foncé
+# define VERY_DARK_YELLOW_PIXEL 0x808000 // Jaune foncé
+
+// map fun
+
+# define TURQUOISE_PIXEL 0x40E0D0 // Turquoise
+# define PINK_PIXEL 0xFFC0CB     // Rose
+# define YELLOW_PIXEL 0xFFFF00  // Jaune
+# define GREEN_PIXEL 0x00FF00   // Vert
+
 # define MLX_ERROR 1
 
 # include "libft.h"
@@ -90,14 +94,14 @@ typedef struct s_tools
 	int			y;
 	int			i;
 	int			z;
+	int			j;
+	int			n;
 	int			mid_win_x;
 	int			mid_win_y;
 	double		delta_x;
 	double		delta_y;
 	double		new_mid_x;
 	double		new_mid_y;
-	int			j;
-	int			n;
 	double		temp_x;
 	double		temp_y;
 	int			start_x;
@@ -117,14 +121,14 @@ typedef struct s_size
 	int			**map;
 	int			height;
 	int			width;
-	int			max_x;
-	int			max_y;
-	int			max_z;
-	int			min_x;
-	int			min_y;
-	int			min_z;
-	int			mid_x;
-	int			mid_y;
+	double		max_x;
+	double		min_x;
+	double		mid_x;
+	double		max_y;
+	double		min_y;
+	double		mid_y;
+	double		max_z;
+	double		min_z;
 }	t_size;
 
 typedef struct s_point2d
@@ -138,7 +142,6 @@ typedef struct s_point3d
 	double		x;
 	double		y;
 	double		z;
-	int			color;
 }	t_point3d;
 
 typedef struct s_img
@@ -155,28 +158,17 @@ typedef struct s_data
 	void		*mlx_ptr;
 	void		*win_ptr;
 	t_img		img;
-	int			cur_img;
 }	t_data;
-
-typedef struct s_rect
-{
-	int			x;
-	int			y;
-	int			width;
-	int			height;
-	int			color;
-}	t_rect;
 
 typedef struct s_mooves
 {
 	double		angle_x;
 	double		angle_y;
 	double		angle_z;
+	double		rotation_step;
+	double		sf;
 	double		z_sf;
 	double		z_scale_step;
-	double		sf;
-	double		rotation_step;
-	double		rotation_angle;
 	int			sign;
 	int			step;
 	int			color;
@@ -188,6 +180,17 @@ typedef struct s_mooves
 	int			keep_scaling;
 }	t_mooves;
 
+typedef enum e_booleen
+{
+	false = 0,
+	true = 1
+}	t_booleen;
+
+typedef struct s_bool
+{
+	t_booleen	keys[NUM_KEYS];
+}	t_bool;
+
 typedef struct s_env
 {
 	t_mooves	*mooves;
@@ -195,6 +198,7 @@ typedef struct s_env
 	t_point2d	*points_2d;
 	t_point3d	*points_3d;
 	t_size		*size;
+	t_bool		*bool;
 	int			*color;
 }	t_env;
 
@@ -223,10 +227,12 @@ void			ft_init_min_max(t_env *e);
 
 // mooves_brain.c
 int				ft_handle_keypress(int keysym, t_env *e);
+int				ft_handle_keyrelease(int keysym, t_env *e);
 int				ft_handle_mouse(int button, int x, int y, t_env *e);
 int				ft_destroy_red_cross(t_env *e);
 void			ft_space_reset(t_env *e);
 //mooves.c
+void			init_keys(t_env *e);
 int				ft_check_1(int keysym, t_env *e);
 int				ft_check_2(int keysym, t_env *e);
 int				ft_check_3(int keysym, t_env *e);
@@ -270,11 +276,11 @@ void			ft_render_line(t_img *img, t_tools *v, t_env *e);
 void			ft_img_pix_put(t_img *img, int x, int y, int color);
 void			ft_my_img_pix_put(t_img *img, int x, int y, int color);
 // pixel_utils.c
-void			ft_make_horizontal(t_env *e, t_tools v);
-void			ft_make_vertical(t_env *e, t_tools v);
-int				ft_my_abs(int c);
+void			ft_make_horizontal(t_env *e);
+void			ft_make_vertical(t_env *e);
 int				ft_get_percent(int max, int min, int z);
-void			ft_check_z(t_env *e, int x, int y);
+void			ft_check_z_horiz(t_env *e, int x, int y);
+void			ft_check_z_vert(t_env *e, int x, int y);
 
 //#################################
 //#	    	   	 FDF	 	      #

@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/07 13:39:31 by gchamore          #+#    #+#             */
-/*   Updated: 2024/03/07 14:09:52 by gchamore         ###   ########.fr       */
+/*   Updated: 2024/03/08 17:34:26 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,8 @@ void	ft_init_render_line(t_tools *v, t_env *e, int index1, int index2)
 	v->start_y = e->points_2d[index1].y;
 	v->end_x = e->points_2d[index2].x;
 	v->end_y = e->points_2d[index2].y;
-	v->diff_x = ft_my_abs(v->end_x - v->start_x);
-	v->diff_y = ft_my_abs(v->end_y - v->start_y);
+	v->diff_x = abs(v->end_x - v->start_x);
+	v->diff_y = abs(v->end_y - v->start_y);
 	if (v->start_x < v->end_x)
 		v->step_x = 1;
 	else
@@ -52,7 +52,7 @@ void	ft_render_line(t_img *img, t_tools *v, t_env *e)
 
 void	ft_img_pix_put(t_img *img, int x, int y, int color)
 {
-	if (y > WINDOW_HEIGHT || x > WINDOW_WIDTH || x < 0 || y < 0)
+	if (y >= WINDOW_HEIGHT || x >= WINDOW_WIDTH || x < 0 || y < 0)
 		return ;
 	else
 		ft_my_img_pix_put(img, x, y, color);

@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/07 13:39:17 by gchamore          #+#    #+#             */
-/*   Updated: 2024/03/07 13:47:13 by gchamore         ###   ########.fr       */
+/*   Updated: 2024/03/08 18:10:00 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,15 +29,16 @@ int	ft_pixel_brain(char *argv, t_env *e)
 	ft_put_middle_window(e);
 	ft_get_pivot(e);
 	mlx_loop_hook(e->data->mlx_ptr, ft_render, e);
-	mlx_key_hook(e->data->win_ptr, ft_handle_keypress, e);
+	mlx_hook(e->data->win_ptr, KeyPress, KeyPressMask, ft_handle_keypress, e);
 	mlx_mouse_hook(e->data->win_ptr, ft_handle_mouse, e);
+	mlx_hook(e->data->win_ptr, KeyRelease, KeyReleaseMask, \
+	ft_handle_keyrelease, e);
 	mlx_hook(e->data->win_ptr, DestroyNotify, StructureNotifyMask, \
 	ft_destroy_red_cross, e);
 	mlx_loop(e->data->mlx_ptr);
 	mlx_destroy_image(e->data->mlx_ptr, e->data->img.mlx_img);
 	mlx_destroy_display(e->data->mlx_ptr);
-	free(e->data->mlx_ptr);
-	return (0);
+	return (free(e->data->mlx_ptr), 0);
 }
 
 int	ft_render(t_env *e)
@@ -53,26 +54,20 @@ int	ft_render(t_env *e)
 
 void	ft_render_background(t_img *img, int color)
 {
-	int	i;
-	int	j;
+	t_tools	v;
 
-	i = 0;
-	while (i < WINDOW_HEIGHT)
+	v.i = 0;
+	while (v.i < WINDOW_HEIGHT)
 	{
-		j = 0;
-		while (j < WINDOW_WIDTH)
-			ft_img_pix_put(img, j++, i, color);
-		++i;
+		v.j = 0;
+		while (v.j < WINDOW_WIDTH)
+			ft_img_pix_put(img, v.j++, v.i, color);
+		++v.i;
 	}
 }
 
 void	ft_render_dot(t_env *e)
 {
-	t_tools	v;
-
-	v.x = 0;
-	v.y = 0;
-	ft_make_horizontal(e, v);
-	v.y = 0;
-	ft_make_vertical(e, v);
+	ft_make_horizontal(e);
+	ft_make_vertical(e);
 }

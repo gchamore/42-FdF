@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/07 11:56:39 by gchamore          #+#    #+#             */
-/*   Updated: 2024/03/07 14:10:23 by gchamore         ###   ########.fr       */
+/*   Updated: 2024/03/08 18:06:27 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ t_env	*ft_create_env(void)
 		e->mooves = malloc(sizeof(t_mooves));
 		e->data = malloc(sizeof(t_data));
 		e->size = malloc(sizeof(t_size));
+		e->bool = malloc(sizeof(t_bool));
 	}
 	return (e);
 }
@@ -30,18 +31,18 @@ void	ft_init_structs(t_env *e)
 {
 	e->size->height = 0;
 	e->size->width = 0;
-	e->mooves->angle_x = M_PI / 6;
-	e->mooves->angle_y = M_PI / 6;
+	e->mooves->angle_x = M_PI / 6 + 0.60;
+	e->mooves->angle_y = M_PI / 6 - 0.5;
 	e->mooves->angle_z = 0;
-	e->mooves->sf = 100.0;
-	e->mooves->z_sf = 0.4;
-	e->mooves->step = 10;
+	e->mooves->sf = 30.0;
+	e->mooves->z_sf = 1;
+	e->mooves->step = 5;
 	e->mooves->sign = 1;
-	e->mooves->rotation_step = 0.1;
-	e->mooves->rotation_angle = 0.1;
-	e->mooves->z_scale_step = 0.1;
+	e->mooves->rotation_step = 0.05;
+	e->mooves->z_scale_step = 0.01;
 	e->mooves->color_choice = 1;
 	e->mooves->keep_scaling = 0;
+	init_keys(e);
 }
 
 int	main(int argc, char **argv)
@@ -54,8 +55,10 @@ int	main(int argc, char **argv)
 		return (ft_free_env(e), 0);
 	ft_init_structs(e);
 	if (argc != 2 || ft_get_size(argv[1], e) == 0)
-		return (free(e->mooves), free(e->data), free(e->size), free(e), 0);
-	e->points_2d = malloc(sizeof(t_point2d) * (e->size->height * e->size->width));
+		return (free(e->mooves), free(e->data), free(e->size), \
+		free(e->bool), free(e), 0);
+	e->points_2d = malloc(sizeof(t_point2d) * (e->size->height * \
+	e->size->width));
 	e->points_3d = \
 	malloc(sizeof(t_point3d) * (e->size->height * e->size->width));
 	if (!e->points_2d)
@@ -97,6 +100,8 @@ void	ft_free_env(t_env *e)
 		free(e->size);
 	if (e->points_3d)
 		free(e->points_3d);
+	if (e->bool)
+		free(e->bool);
 	if (e)
 		free(e);
 }
