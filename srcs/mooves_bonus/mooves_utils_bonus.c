@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   mooves_utils.c                                     :+:      :+:    :+:   */
+/*   mooves_utils_bonus.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/07 13:17:14 by gchamore          #+#    #+#             */
-/*   Updated: 2024/03/08 17:54:11 by gchamore         ###   ########.fr       */
+/*   Updated: 2024/03/11 11:06:59 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../headers/fdf.h"
+#include "../headers/fdf_bonus.h"
 
 void	ft_move_points_x(t_env *e, int sign)
 {

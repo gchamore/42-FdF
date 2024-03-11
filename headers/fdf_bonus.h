@@ -5,13 +5,13 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/03/11 13:29:00 by gchamore          #+#    #+#             */
-/*   Updated: 2024/03/11 14:16:18 by gchamore         ###   ########.fr       */
+/*   Created: 2024/02/12 12:02:55 by gchamore          #+#    #+#             */
+/*   Updated: 2024/03/11 13:40:14 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FDF_BONUS_H
-# define FDF_BONUS_H
+#ifndef FDF_H
+# define FDF_H
 
 // 4320p (8K) : 7 680 x 4 320.
 // 2160p (4K) : 3 840 x 2 160.
@@ -24,7 +24,10 @@
 
 # define WINDOW_WIDTH 854
 # define WINDOW_HEIGHT 480
+# define SCALE_FACTOR_MAX 70
+# define SCALE_FACTOR_MIN 1
 # define M_PI 3.14159265358979323846
+# define NUM_KEYS 70000
 
 // colors classiques
 
@@ -32,11 +35,45 @@
 # define WHITE_PIXEL 0xFFFFFF   // Blanc
 
 // map vertes
-
 # define DARK_GREEN_PIXEL 0x006400
 # define MEDIUM_DARK_GREEN_PIXEL 0x228B22
 # define MEDIUM_LIGHT_GREEN_PIXEL 0x3CB371
 # define LIGHT_GREEN_PIXEL 0x7FFF00
+
+// map bleu
+
+# define DARK_BLUE_PIXEL 0x00008B
+# define MEDIUM_DARK_BLUE_PIXEL 0x4169E1
+# define MEDIUM_LIGHT_BLUE_PIXEL 0x4682B4
+# define LIGHT_BLUE_PIXEL 0x87CEEB 
+
+// map oranges
+
+# define DARK_ORANGE_RED_PIXEL 0x8B2500
+# define MEDIUM_DARK_ORANGE_RED_PIXEL 0xB22222
+# define MEDIUM_LIGHT_ORANGE_RED_PIXEL 0xCD5C5C
+# define LIGHT_ORANGE_RED_PIXEL 0xFF6347
+
+// map jaune
+
+# define DARK_YELLOW_PIXEL 0x8B8B00
+# define MEDIUM_DARK_YELLOW_PIXEL 0xBDB76B
+# define MEDIUM_LIGHT_YELLOW_PIXEL 0xFFFFE0
+# define LIGHT_YELLOW_PIXEL 0xFFFF00
+
+// map fonce
+
+# define VERY_DARK_RED_PIXEL 0x800000   // Rouge foncé
+# define VERY_DARK_GREEN_PIXEL 0x008000 // Vert foncé
+# define VERY_DARK_BLUE_PIXEL 0x000080  // Bleu foncé
+# define VERY_DARK_YELLOW_PIXEL 0x808000 // Jaune foncé
+
+// map fun
+
+# define TURQUOISE_PIXEL 0x40E0D0 // Turquoise
+# define PINK_PIXEL 0xFFC0CB     // Rose
+# define YELLOW_PIXEL 0xFFFF00  // Jaune
+# define GREEN_PIXEL 0x00FF00   // Vert
 
 # define MLX_ERROR 1
 
@@ -143,6 +180,17 @@ typedef struct s_mooves
 	int			keep_scaling;
 }	t_mooves;
 
+typedef enum e_booleen
+{
+	false = 0,
+	true = 1
+}	t_booleen;
+
+typedef struct s_bool
+{
+	t_booleen	keys[NUM_KEYS];
+}	t_bool;
+
 typedef struct s_env
 {
 	t_mooves	*mooves;
@@ -150,6 +198,7 @@ typedef struct s_env
 	t_point2d	*points_2d;
 	t_point3d	*points_3d;
 	t_size		*size;
+	t_bool		*bool;
 	int			*color;
 }	t_env;
 
@@ -163,11 +212,14 @@ void			ft_rotate_point_x(t_point3d *points_3d, double angle);
 void			ft_rotate_point_y(t_point3d *points_3d, double angle);
 void			ft_rotate_point_z(t_point3d *points_3d, double angle);
 // dots.c
+void			ft_put_middle_map(t_env *e);
 void			ft_put_middle_window(t_env *e);
+void			ft_update_coordinates_and_pivot(t_env *e);
 // dots_utils.c
 void			ft_get_min_max(t_env *e);
-void			ft_init_min_max(t_env *e);
+void			ft_get_pivot(t_env *e);
 void			ft_verify_size(t_env *e);
+void			ft_init_min_max(t_env *e);
 
 //#################################
 //#	    	   	 MOOVES	 	      #
@@ -175,7 +227,21 @@ void			ft_verify_size(t_env *e);
 
 // mooves_brain.c
 int				ft_handle_keypress(int keysym, t_env *e);
+int				ft_handle_keyrelease(int keysym, t_env *e);
+int				ft_handle_mouse(int button, int x, int y, t_env *e);
 int				ft_destroy_red_cross(t_env *e);
+void			ft_space_reset(t_env *e);
+//mooves.c
+void			init_keys(t_env *e);
+int				ft_check_1(int keysym, t_env *e);
+int				ft_check_2(int keysym, t_env *e);
+int				ft_check_3(int keysym, t_env *e);
+int				ft_check_4(int keysym, t_env *e);
+//mooves_utils.c
+void			ft_move_points_x(t_env *e, int sign);
+void			ft_move_points_y(t_env *e, int sign);
+void			ft_choose_color1(t_env *e);
+void			ft_choose_color2(t_env *e);
 
 //#################################
 //#	    	   PARSING		      #

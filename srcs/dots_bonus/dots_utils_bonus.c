@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   dots_utils.c                                       :+:      :+:    :+:   */
+/*   dots_utils_bonus.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/07 12:54:25 by gchamore          #+#    #+#             */
-/*   Updated: 2024/03/11 14:41:55 by gchamore         ###   ########.fr       */
+/*   Updated: 2024/03/11 11:06:17 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../headers/fdf.h"
+#include "../headers/fdf_bonus.h"
 
 void	ft_get_min_max(t_env *e)
 {
@@ -41,6 +41,27 @@ void	ft_get_min_max(t_env *e)
 	}
 }
 
+void	ft_get_pivot(t_env *e)
+{
+	ft_get_min_max(e);
+	e->size->mid_x = (e->size->max_x + e->size->min_x) / 2;
+	e->size->mid_y = (e->size->max_y + e->size->min_y) / 2;
+}
+
+void	ft_verify_size(t_env *e)
+{
+	while ((e->size->max_y > WINDOW_HEIGHT || e->size->max_x > WINDOW_WIDTH) \
+	&& e->mooves->sf > 1)
+	{
+		e->mooves->sf -= 1.0;
+		ft_get_coordinates_from_map(e);
+		ft_get_min_max(e);
+	}
+	if (e->mooves->keep_scaling == 0)
+		e->mooves->keep_scaling = e->mooves->sf;
+	ft_get_pivot(e);
+}
+
 void	ft_init_min_max(t_env *e)
 {
 	e->size->max_x = e->points_2d[0].x;
@@ -49,17 +70,4 @@ void	ft_init_min_max(t_env *e)
 	e->size->min_y = e->points_2d[0].y;
 	e->size->max_z = e->size->map[0][0];
 	e->size->min_z = e->size->map[0][0];
-}
-
-void	ft_verify_size(t_env *e)
-{
-	while ((e->size->max_y > WINDOW_HEIGHT || e->size->max_x > WINDOW_WIDTH) \
-	&& e->mooves->sf > 1)
-	{
-		e->mooves->sf -= 0.2;
-		ft_get_coordinates_from_map(e);
-		ft_get_min_max(e);
-	}
-	if (e->mooves->keep_scaling == 0)
-		e->mooves->keep_scaling = e->mooves->sf;
 }

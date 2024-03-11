@@ -5,6 +5,7 @@
 		"x.h": "c",
 		"cmath": "c",
 		"keysym.h": "c",
-		"stdio.h": "c"
+		"stdio.h": "c",
+		"fdf_bonus.h": "c"
 	}
 }

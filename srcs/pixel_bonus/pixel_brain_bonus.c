@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pixel_brain.c                                      :+:      :+:    :+:   */
+/*   pixel_brain_bonus.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/07 13:39:17 by gchamore          #+#    #+#             */
-/*   Updated: 2024/03/11 14:39:35 by gchamore         ###   ########.fr       */
+/*   Updated: 2024/03/11 11:07:04 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../headers/fdf.h"
+#include "../headers/fdf_bonus.h"
 
 int	ft_pixel_brain(char *argv, t_env *e)
 {
@@ -27,8 +27,12 @@ int	ft_pixel_brain(char *argv, t_env *e)
 	&e->data->img.bpp, &e->data->img.line_len, &e->data->img.endian);
 	ft_get_coordinates_from_map(e);
 	ft_put_middle_window(e);
+	ft_get_pivot(e);
 	mlx_loop_hook(e->data->mlx_ptr, ft_render, e);
 	mlx_hook(e->data->win_ptr, KeyPress, KeyPressMask, ft_handle_keypress, e);
+	mlx_mouse_hook(e->data->win_ptr, ft_handle_mouse, e);
+	mlx_hook(e->data->win_ptr, KeyRelease, KeyReleaseMask, \
+	ft_handle_keyrelease, e);
 	mlx_hook(e->data->win_ptr, DestroyNotify, StructureNotifyMask, \
 	ft_destroy_red_cross, e);
 	mlx_loop(e->data->mlx_ptr);

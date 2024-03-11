@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/07 13:30:00 by gchamore          #+#    #+#             */
-/*   Updated: 2024/03/07 13:35:20 by gchamore         ###   ########.fr       */
+/*   Updated: 2024/03/11 14:16:24 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@ int	ft_get_size(char *file, t_env *e)
 	e->size->width = ft_words_count(line);
 	while (line != 0)
 	{
+		if (e->size->width != ft_words_count(line))
+			return (free(line), close(fd), 0);
 		if (e->size->width != 0)
 		e->size->height++;
 		free(line);

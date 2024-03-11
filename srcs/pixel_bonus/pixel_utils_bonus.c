@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pixel_utils.c                                      :+:      :+:    :+:   */
+/*   pixel_utils_bonus.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/07 13:39:34 by gchamore          #+#    #+#             */
-/*   Updated: 2024/03/11 13:50:13 by gchamore         ###   ########.fr       */
+/*   Updated: 2024/03/11 13:50:21 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../headers/fdf.h"
+#include "../headers/fdf_bonus.h"
 
 void	ft_make_horizontal(t_env *e)
 {
@@ -67,16 +67,17 @@ void	ft_check_z_horiz(t_env *e, int x, int y)
 	z = abs(ft_get_percent(e->size->max_z, e->size->min_z, e->size->map[x][y]));
 	z1 = abs(ft_get_percent(e->size->max_z, e->size->min_z, \
 	e->size->map[x][y + 1]));
+	ft_choose_color1(e);
 	if (z1 > z)
 		z = z1;
 	if (z >= 0 && z < 20)
-		e->mooves->color = DARK_GREEN_PIXEL;
+		e->mooves->color = e->mooves->color1;
 	else if (z >= 20 && z <= 50)
-		e->mooves->color = MEDIUM_DARK_GREEN_PIXEL;
+		e->mooves->color = e->mooves->color2;
 	else if (z > 50 && z <= 80)
-		e->mooves->color = MEDIUM_LIGHT_GREEN_PIXEL;
+		e->mooves->color = e->mooves->color3;
 	else if (z > 80 && z <= 100)
-		e->mooves->color = LIGHT_GREEN_PIXEL;
+		e->mooves->color = e->mooves->color4;
 }
 
 void	ft_check_z_vert(t_env *e, int x, int y)
@@ -88,16 +89,17 @@ void	ft_check_z_vert(t_env *e, int x, int y)
 	z = abs(ft_get_percent(e->size->max_z, e->size->min_z, e->size->map[x][y]));
 	z1 = abs(ft_get_percent(e->size->max_z, e->size->min_z, \
 	e->size->map[x + 1][y]));
+	ft_choose_color1(e);
 	if (z1 > z)
 		z = z1;
 	if (z >= 0 && z < 20)
-		e->mooves->color = DARK_GREEN_PIXEL;
+		e->mooves->color = e->mooves->color1;
 	else if (z >= 20 && z <= 50)
-		e->mooves->color = MEDIUM_DARK_GREEN_PIXEL;
+		e->mooves->color = e->mooves->color2;
 	else if (z > 50 && z <= 80)
-		e->mooves->color = MEDIUM_LIGHT_GREEN_PIXEL;
+		e->mooves->color = e->mooves->color3;
 	else if (z > 80 && z <= 100)
-		e->mooves->color = LIGHT_GREEN_PIXEL;
+		e->mooves->color = e->mooves->color4;
 }
 
 int	ft_get_percent(int max, int min, int z)

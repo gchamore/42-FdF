@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   dots_brain.c                                       :+:      :+:    :+:   */
+/*   dots_brain_bonus.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/07 12:15:42 by gchamore          #+#    #+#             */
-/*   Updated: 2024/03/11 11:08:10 by gchamore         ###   ########.fr       */
+/*   Updated: 2024/03/11 11:06:42 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../headers/fdf.h"
+#include "../headers/fdf_bonus.h"
 
 void	ft_get_coordinates_from_map(t_env *e)
 {
