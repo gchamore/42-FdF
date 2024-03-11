@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/07 11:56:39 by gchamore          #+#    #+#             */
-/*   Updated: 2024/03/11 14:37:20 by gchamore         ###   ########.fr       */
+/*   Updated: 2024/03/11 15:18:42 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,13 +33,14 @@ void	ft_init_structs(t_env *e)
 	e->mooves->angle_x = M_PI / 6;
 	e->mooves->angle_y = M_PI / 6 - 0.7;
 	e->mooves->angle_z = 0;
-	e->mooves->sf = 30.0;
+	e->mooves->sf = 15.0;
 	e->mooves->z_sf = 0.2;
 	e->mooves->step = 5;
 	e->mooves->sign = 1;
 	e->mooves->rotation_step = 0.05;
 	e->mooves->z_scale_step = 0.01;
 	e->mooves->color = WHITE_PIXEL;
+	e->mooves->keep_scaling = 0;
 }
 
 int	main(int argc, char **argv)

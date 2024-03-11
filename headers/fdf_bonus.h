@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   fdf.h                                              :+:      :+:    :+:   */
+/*   fdf_bonus.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/12 12:02:55 by gchamore          #+#    #+#             */
-/*   Updated: 2024/03/11 13:40:14 by gchamore         ###   ########.fr       */
+/*   Updated: 2024/03/11 15:10:14 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FDF_H
-# define FDF_H
+#ifndef FDF_BONUS_H
+# define FDF_BONUS_H
 
 // 4320p (8K) : 7 680 x 4 320.
 // 2160p (4K) : 3 840 x 2 160.
@@ -79,10 +79,7 @@
 
 # include "libft.h"
 # include "mlx.h"
-# include <fcntl.h>
-# include <errno.h>
 # include <math.h>
-# include <stdio.h>
 # include <unistd.h>
 # include <X11/X.h>
 # include <X11/keysym.h>

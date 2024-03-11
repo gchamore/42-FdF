@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/07 13:39:34 by gchamore          #+#    #+#             */
-/*   Updated: 2024/03/11 13:50:13 by gchamore         ###   ########.fr       */
+/*   Updated: 2024/03/11 15:20:18 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,6 @@ int	ft_get_percent(int max, int min, int z)
 
 	if (z != 0)
 	{
-
 		max_temp = max - min;
 		max_perc = 100;
 		temp = ((z - min) * max_perc / max_temp);
